@@ -239,7 +239,7 @@ class GamePool:
                 return game
 
     def finish_game(self, game_id):
-        """Remove finished game from the pool.
+        """Removes finished game from the pool.
 
         Args:
             game_id (str): Game ID.
