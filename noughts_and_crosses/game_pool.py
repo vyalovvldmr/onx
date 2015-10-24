@@ -208,7 +208,7 @@ class GamePool:
             Instanse of Game() class.
 
         Raises:
-            GameNotFoundError: An error occurred accessing unexistent game.
+            GameNotFoundError: An error occurred accessing inexistent game.
             PlayerNotFoundError: An error occurred if
                 passed player_id not found in the game.
 
