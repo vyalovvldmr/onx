@@ -36,7 +36,7 @@ def print_grid(grid):
 
 def main():
     player_id = uuid.uuid4().hex
-    print('Waiting for opponent...')
+    print('Waiting for the opponent...')
 
     payload = {'player_id': player_id}
     response = requests.get(URL, payload).json()
@@ -62,7 +62,7 @@ def main():
         else:
             turn = input('Your turn (Type a number for 1 to 9): ')
             payload.update({'turn': turn})
-            print('Waiting for opponent...')
+            print('Waiting for the opponent...')
             response = requests.get(URL, payload).json()
 
 
