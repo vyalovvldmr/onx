@@ -198,7 +198,7 @@ class GamePool:
         self._awaiting = None
 
     def retrieve_game(self, game_id, player_id):
-        """Retrieves a game from the pool. Creates a new one if not exists.
+        """Retrieves a game from the pool or creates a new one.
 
         Args:
             game_id (str): Game ID.
