@@ -20,13 +20,13 @@ class GameTestCase(unittest.TestCase):
             BoxType.nought, BoxType.empty, BoxType.empty,
             BoxType.nought, BoxType.empty, BoxType.empty,
         ]
-        self.assertEqual(game.is_winner, True)
+        self.assertTrue(game.is_winner)
         game.grid = [
             BoxType.nought, BoxType.cross, BoxType.cross,
             BoxType.nought, BoxType.nought, BoxType.empty,
             BoxType.cross, BoxType.nought, BoxType.cross,
         ]
-        self.assertEqual(game.is_winner, False)
+        self.assertFalse(game.is_winner)
 
     def test_turn(self):
         game = Game()
