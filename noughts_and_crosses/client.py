@@ -7,6 +7,7 @@ import uuid
 import websocket
 
 import settings
+from server import BoxType, GameStatus
 
 
 URL = 'ws://{host}:{port}/ws'.format(
@@ -23,25 +24,6 @@ GRID_TEMPLATE = """
 │{}│{}│{}│
 └─┴─┴─┘
 """
-
-
-class BoxType:
-
-    empty = 1
-    nought = 2
-    cross = 3
-
-
-class GameStatus:
-
-    # game is waiting for a player
-    awaiting = 1
-    # game is in progress
-    in_progress = 2
-    # some player gone
-    unfinished = 3
-    # game is finished
-    finished = 4
 
 
 def print_grid(grid):
