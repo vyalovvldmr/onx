@@ -13,7 +13,6 @@ URL = 'ws://{host}:{port}/ws'.format(
     host=settings.SERVER_IP,
     port=settings.SERVER_PORT
 )
-print(URL)
 
 GRID_TEMPLATE = """
 ┌─┬─┬─┐
