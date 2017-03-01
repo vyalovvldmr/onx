@@ -1,16 +1,8 @@
 # Noughts & Crosses
 Test for a job application.
 
-Realization of client-server Noughts & Crosses game.
+Client-server Noughts & Crosses game through websockets.
 
-Long polling was demanded.
-
-### Requirements
+### Requires
 
 Python >= 3.5
-
-aiohttp
-
-requests
-
-simplejson
