@@ -8,7 +8,7 @@ from server import WebsocketHandler, Game, BoxType
 
 class GameTestCase(unittest.TestCase):
 
-    maxDiff = False
+    maxDiff = None
 
     def test_is_winner(self):
         game = Game()
@@ -24,6 +24,11 @@ class GameTestCase(unittest.TestCase):
             BoxType.cross, BoxType.nought, BoxType.cross,
         ]
         self.assertEqual(game.is_winner, False)
+
+
+class WebsocketHandlerTestCase(unittest.TestCase):
+
+    maxDiff = None
 
     def test_validation(self):
         game = Game()

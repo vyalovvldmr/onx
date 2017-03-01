@@ -153,7 +153,7 @@ def publish_game_state(game):
     publish(payload, game.players)
 
 
-class WebSocket(web.View):
+class WebsocketHandler(web.View):
 
     @staticmethod
     def validate_request(data, game):
@@ -217,7 +217,7 @@ class WebSocket(web.View):
 async def init(loop):
     app = web.Application(loop=loop)
     app['websockets'] = []
-    app.router.add_route('GET', '/ws', WebSocket)
+    app.router.add_route('GET', '/ws', WebsocketHandler)
 
     await loop.create_server(
         app.make_handler(),
