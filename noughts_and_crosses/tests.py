@@ -3,7 +3,7 @@ import json
 
 from schema import SchemaError
 
-from server import WebsocketHandler, Game, BoxType
+from server import WebsocketHandler, Game, BoxType, Player
 
 
 class GameTestCase(unittest.TestCase):
@@ -55,6 +55,23 @@ class WebsocketHandlerTestCase(unittest.TestCase):
             error.exception.code,
             'Please type a number from 1 to 9.'
         )
+
+        with self.assertRaises(SchemaError) as error:
+            WebsocketHandler.validate_request(
+                json.dumps({
+                    'operation': 'turn',
+                    'payload': {
+                        'turn': 0,
+                    }
+                }),
+                game
+            )
+        self.assertEqual(
+            error.exception.code,
+            'Turn is applicable for two players game'
+        )
+
+        game.players = [Player, Player]
 
         with self.assertRaises(SchemaError) as error:
             WebsocketHandler.validate_request(

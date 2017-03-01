@@ -51,6 +51,8 @@ class Game:
         (1, 4, 7), (2, 5, 8), (0, 4, 8), (2, 4, 6)
     )
 
+    player_amount = 2
+
     def __init__(self):
         self.grid = [BoxType.empty] * Game.grid_size * Game.grid_size
         self.whose_turn = None
@@ -59,10 +61,12 @@ class Game:
         self.winner = None
 
     def add_player(self, player):
+        assert len(self.players) < Game.player_amount, \
+            'Max player amount reached.'
         self.players.append(player)
 
     def toss(self):
-        assert len(self.players) == 2, \
+        assert len(self.players) == Game.player_amount, \
             'Toss is applicable for two players game'
         box_types = [BoxType.nought, BoxType.cross]
         random.shuffle(box_types)
@@ -80,6 +84,8 @@ class Game:
         }
 
     def turn(self, player, turn):
+        assert len(self.players) == Game.player_amount, \
+            'Turn is applicable for two players game'
         self.grid[turn] = player.box_type
         self.whose_turn = [p for p in self.players if p.id != self.whose_turn.id][0]
         if self.is_winner:
@@ -176,6 +182,10 @@ class WebsocketHandler(web.View):
                             Schema(
                                 lambda x: game.grid[x] == BoxType.empty,
                                 error='Box is not empty. Try again.'
+                            ),
+                            Schema(
+                                lambda x: len(game.players) == Game.player_amount,
+                                error='Turn is applicable for two players game'
                             ),
                         )
                     },
