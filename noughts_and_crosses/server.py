@@ -4,13 +4,13 @@ Server for Noughts & Crosses game.
 import asyncio
 import json
 import random
+import logging
 
 import aiohttp
 from aiohttp import web
 from schema import Schema, Use, And, SchemaError
 
-
-GRID_SIZE = 3
+import settings
 
 
 class BoxType:
@@ -44,13 +44,15 @@ class Player:
 
 class Game:
 
+    grid_size = 3
+
     winning_lines = (
         (0, 1, 2), (3, 4, 5), (6, 7, 8), (0, 3, 6),
         (1, 4, 7), (2, 5, 8), (0, 4, 8), (2, 4, 6)
     )
 
     def __init__(self):
-        self.grid = [BoxType.empty] * GRID_SIZE * GRID_SIZE
+        self.grid = [BoxType.empty] * Game.grid_size * Game.grid_size
         self.whose_turn = None
         self.players = []
         self.status = GameStatus.awaiting
@@ -69,10 +71,6 @@ class Game:
         self.whose_turn = self.players[random.randint(0, 1)]
         self.status = GameStatus.in_progress
 
-    async def close(self):
-        for player in self.players:
-            await player.ws.close()
-
     def to_json(self):
         return {
             'whose_turn': self.whose_turn and self.whose_turn.id or None,
@@ -85,7 +83,8 @@ class Game:
         self.grid[turn] = player.box_type
         self.whose_turn = [p for p in self.players if p.id != self.whose_turn.id][0]
         if self.is_winner:
-            self.winner = player.id
+            self.winner = player
+            self.status = GameStatus.finished
         elif BoxType.empty not in self.grid:
             self.status = GameStatus.finished
 
@@ -125,32 +124,36 @@ class GamePool:
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         if GamePool._awaiting is self._game:
             GamePool._awaiting = None
-        await self._game.close()
+        if self._game.status == GameStatus.in_progress:
+            self._game.status = GameStatus.unfinished
+        publish_game_state(self._game)
+        for player in self._game.players:
+            await player.ws.close()
 
 
+def publish(payload, subscribers):
+    for subscriber in subscribers:
+        subscriber.ws.send_json(payload)
 
-class WebsocketHandler:
 
-    @staticmethod
-    def publish(payload, subscribers):
-        for subscriber in subscribers:
-            subscriber.ws.send_json(payload)
-
-    @staticmethod
-    def send_error(error_message, player):
-        player.ws.send_json({
-            'event': 'error',
-            'payload': {
-                'message': error_message,
-            }
-        })
-
-    def publish_game_state(self, game):
-        payload = {
-            'event': 'game_state',
-            'payload': game.to_json()
+def send_error(error_message, player):
+    player.ws.send_json({
+        'event': 'error',
+        'payload': {
+            'message': error_message,
         }
-        self.publish(payload, game.players)
+    })
+
+
+def publish_game_state(game):
+    payload = {
+        'event': 'game_state',
+        'payload': game.to_json()
+    }
+    publish(payload, game.players)
+
+
+class WebSocket(web.View):
 
     @staticmethod
     def validate_request(data, game):
@@ -181,48 +184,71 @@ class WebsocketHandler:
         )
         return schema.validate(data)
 
-    async def serve(self, request):
-
+    async def get(self):
         ws = web.WebSocketResponse()
-        await ws.prepare(request)
-        player = Player(id=request.cookies['player_id'], ws=ws)
+        await ws.prepare(self.request)
+        self.request.app['websockets'].append(ws)
+
+        player = Player(id=self.request.cookies['player_id'], ws=ws)
 
         async with GamePool(player) as game:
-            self.publish_game_state(game)
+            publish_game_state(game)
             async for message in ws:
                 if message.type == aiohttp.WSMsgType.TEXT:
                     try:
                         request = self.validate_request(message.data, game)
                     except SchemaError as error:
-                        self.send_error(error.code, player)
+                        send_error(error.code, player)
                     else:
                         game.turn(player, int(request['payload']['turn']))
-                        self.publish_game_state(game)
+                        publish_game_state(game)
+                if message.type == aiohttp.WSMsgType.ERROR:
+                    logging.debug(
+                        'ws connection closed with exception %s',
+                        ws.exception()
+                    )
 
-        print('websocket connection closed')
+        logging.debug('Websocket connection closed')
+        self.request.app['websockets'].remove(ws)
 
         return ws
 
 
-SERVER_IP = '127.0.0.1'
-SERVER_PORT = '8080'
-
-
 async def init(loop):
     app = web.Application(loop=loop)
-    ws = WebsocketHandler()
-    app.router.add_route('GET', '/ws', ws.serve)
+    app['websockets'] = []
+    app.router.add_route('GET', '/ws', WebSocket)
 
-    srv = await loop.create_server(
-        app.make_handler(), SERVER_IP, SERVER_PORT)
-    print('Server started at http://{}:{}'.format(SERVER_IP, SERVER_PORT))
-    return srv
+    await loop.create_server(
+        app.make_handler(),
+        settings.SERVER_IP,
+        settings.SERVER_PORT
+    )
+
+    logging.info(
+        'Server started at ws://%s:%s',
+        settings.SERVER_IP,
+        settings.SERVER_PORT
+    )
+
+    return app
+
+
+async def shutdown(app):
+    for ws in app['websockets']:
+        await ws.close()
 
 
 if __name__ == '__main__':
+    logging.getLogger().addHandler(logging.StreamHandler())
+    logging.getLogger().setLevel(settings.LOGGING_LEVEL)
+
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(init(loop))
+    app = loop.run_until_complete(init(loop))
     try:
         loop.run_forever()
     except KeyboardInterrupt:
-        pass
+        logging.info('Server is shutting down')
+    finally:
+        loop.run_until_complete(shutdown(app))
+        loop.close()

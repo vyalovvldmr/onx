@@ -1,17 +1,34 @@
 """
 Command line client for Noughts & Crosses game.
 """
-import asyncio
 import json
 import uuid
+from contextlib import suppress
 
-import websockets
+import websocket
+
+import settings
 
 
-URL = 'ws://localhost:8080/ws'
+URL = 'ws://{host}:{port}/ws'.format(
+    host=settings.SERVER_IP,
+    port=settings.SERVER_PORT
+)
+print(URL)
+
+GRID_TEMPLATE = """
+┌─┬─┬─┐
+│{}│{}│{}│
+├─┼─┼─┤
+│{}│{}│{}│
+├─┼─┼─┤
+│{}│{}│{}│
+└─┴─┴─┘
+"""
 
 
 class BoxType:
+
     empty = 1
     nought = 2
     cross = 3
@@ -30,37 +47,32 @@ class GameStatus:
 
 
 def print_grid(grid):
-    grid_template = """
-        ┌─┬─┬─┐
-        │{}│{}│{}│
-        ├─┼─┼─┤
-        │{}│{}│{}│
-        ├─┼─┼─┤
-        │{}│{}│{}│
-        └─┴─┴─┘
-    """
     box_types = {
         BoxType.empty: ' ',
         BoxType.nought: '0',
         BoxType.cross: 'X',
     }
-    print(grid_template.format(*[box_types[i] for i in grid]))
+    print(GRID_TEMPLATE.format(*[box_types[i] for i in grid]))
 
 
-async def make_turn(game_state, player_id, ws):
+def make_turn(game_state, player_id, ws):
     if game_state.get('whose_turn') == player_id:
         turn = input('Your turn (Type a number for 1 to 9): ')
-        payload = {'operation': 'turn', 'payload': {'turn': int(turn) - 1}}
-        await ws.send(json.dumps(payload))
+        try:
+            payload = {'operation': 'turn', 'payload': {'turn': int(turn) - 1}}
+        except (ValueError, TypeError):
+            make_turn(game_state, player_id, ws)
+        else:
+            ws.send(json.dumps(payload))
     else:
-        print('Waiting for the opponent...')
+        print('Waiting for opponent...')
 
 
-async def main():
+def main():
     player_id = str(uuid.uuid4())
-    ws = await websockets.connect(
+    ws = websocket.create_connection(
         URL,
-        extra_headers={
+        header={
             'Cookie': 'player_id={player_id}'.format(
                 player_id=player_id
             )
@@ -68,20 +80,32 @@ async def main():
     )
     game_state = None
     while True:
-        message = json.loads(await ws.recv())
+        message = json.loads(ws.recv())
         payload = message['payload']
         if message['event'] == 'error':
             print(payload['message'])
-            await make_turn(game_state, player_id, ws)
+            make_turn(game_state, player_id, ws)
         elif message['event'] == 'game_state':
             game_state = payload
             print_grid(payload['grid'])
             if payload['status'] == GameStatus.awaiting:
-                print('Waiting for the opponent...')
+                print('Waiting for opponent...')
+            if payload['status'] == GameStatus.finished:
+                if payload['winner'] == None:
+                    print('Drawn game')
+                elif payload['winner'] == player_id:
+                    print('Winner!')
+                else:
+                    print('Loser :(')
+                break
             elif payload['status'] == GameStatus.in_progress:
-                await make_turn(game_state, player_id, ws)
+                make_turn(game_state, player_id, ws)
+            elif payload['status'] == GameStatus.unfinished:
+                print('Opponent gone')
+                break
+    ws.close()
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    with suppress(KeyboardInterrupt):
+        main()

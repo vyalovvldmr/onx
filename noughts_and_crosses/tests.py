@@ -3,7 +3,7 @@ import json
 
 from schema import SchemaError
 
-from server import WebsocketHandler, Game, BoxType, GRID_SIZE
+from server import WebsocketHandler, Game, BoxType
 
 
 class GameTestCase(unittest.TestCase):
@@ -82,7 +82,7 @@ class GameTestCase(unittest.TestCase):
             }
         )
 
-        game.grid = [BoxType.nought] * GRID_SIZE * GRID_SIZE
+        game.grid = [BoxType.nought] * Game.grid_size * Game.grid_size
 
         with self.assertRaises(SchemaError) as error:
             WebsocketHandler.validate_request(
