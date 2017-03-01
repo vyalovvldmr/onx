@@ -3,7 +3,6 @@ Command line client for Noughts & Crosses game.
 """
 import json
 import uuid
-from contextlib import suppress
 
 import websocket
 
@@ -78,34 +77,43 @@ def main():
             )
         }
     )
-    game_state = None
-    while True:
-        message = json.loads(ws.recv())
-        payload = message['payload']
-        if message['event'] == 'error':
-            print(payload['message'])
-            make_turn(game_state, player_id, ws)
-        elif message['event'] == 'game_state':
-            game_state = payload
-            print_grid(payload['grid'])
-            if payload['status'] == GameStatus.awaiting:
-                print('Waiting for opponent...')
-            if payload['status'] == GameStatus.finished:
-                if payload['winner'] == None:
-                    print('Drawn game')
-                elif payload['winner'] == player_id:
-                    print('Winner!')
-                else:
-                    print('Loser :(')
-                break
-            elif payload['status'] == GameStatus.in_progress:
+    game_state = {}
+    try:
+        while True:
+            message = json.loads(ws.recv())
+            payload = message['payload']
+
+            if message['event'] == 'error':
+                print(payload['message'])
                 make_turn(game_state, player_id, ws)
-            elif payload['status'] == GameStatus.unfinished:
-                print('Opponent gone')
-                break
-    ws.close()
+
+            elif message['event'] == 'game_state':
+                game_state = payload
+                print_grid(payload['grid'])
+
+                if payload['status'] == GameStatus.awaiting:
+                    print('Waiting for opponent...')
+
+                if payload['status'] == GameStatus.finished:
+                    if payload['winner'] is None:
+                        print('Drawn game')
+                    elif payload['winner'] == player_id:
+                        print('Winner!')
+                    else:
+                        print('Loser :(')
+                    break
+
+                elif payload['status'] == GameStatus.in_progress:
+                    make_turn(game_state, player_id, ws)
+
+                elif payload['status'] == GameStatus.unfinished:
+                    print('Opponent gone')
+                    break
+    except KeyboardInterrupt:
+        pass
+    finally:
+        ws.close()
 
 
 if __name__ == '__main__':
-    with suppress(KeyboardInterrupt):
-        main()
+    main()

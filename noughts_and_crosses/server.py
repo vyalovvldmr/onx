@@ -208,7 +208,7 @@ class WebSocket(web.View):
                         ws.exception()
                     )
 
-        logging.debug('Websocket connection closed')
+        logging.debug('websocket connection closed')
         self.request.app['websockets'].remove(ws)
 
         return ws
@@ -226,7 +226,7 @@ async def init(loop):
     )
 
     logging.info(
-        'Server started at ws://%s:%s',
+        'server started at ws://%s:%s',
         settings.SERVER_IP,
         settings.SERVER_PORT
     )
@@ -248,7 +248,7 @@ if __name__ == '__main__':
     try:
         loop.run_forever()
     except KeyboardInterrupt:
-        logging.info('Server is shutting down')
+        logging.info('server is shutting down')
     finally:
         loop.run_until_complete(shutdown(app))
         loop.close()
