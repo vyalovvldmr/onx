@@ -11,6 +11,7 @@ from aiohttp import web
 from schema import Schema, Use, And, SchemaError
 
 import settings
+from errors import NotYourTurnError
 
 
 class BoxType:
@@ -86,6 +87,9 @@ class Game:
     def turn(self, player, turn):
         assert len(self.players) == Game.player_amount, \
             'Turn is applicable for two players game'
+        if self.whose_turn.id != player.id:
+            raise NotYourTurnError()
+
         self.grid[turn] = player.box_type
         self.whose_turn = [p for p in self.players if p.id != self.whose_turn.id][0]
         if self.is_winner:
@@ -210,7 +214,10 @@ class WebsocketHandler(web.View):
                     except SchemaError as error:
                         send_error(error.code, player)
                     else:
-                        game.turn(player, int(request['payload']['turn']))
+                        try:
+                            game.turn(player, int(request['payload']['turn']))
+                        except NotYourTurnError:
+                            send_error('Not your turn', player)
                         publish_game_state(game)
                 if message.type == aiohttp.WSMsgType.ERROR:
                     logging.debug(

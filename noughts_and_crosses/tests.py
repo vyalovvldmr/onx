@@ -1,9 +1,12 @@
 import unittest
 import json
+import uuid
 
 from schema import SchemaError
+from aiohttp import web
 
 from server import WebsocketHandler, Game, BoxType, Player
+from errors import NotYourTurnError
 
 
 class GameTestCase(unittest.TestCase):
@@ -24,6 +27,22 @@ class GameTestCase(unittest.TestCase):
             BoxType.cross, BoxType.nought, BoxType.cross,
         ]
         self.assertEqual(game.is_winner, False)
+
+    def test_turn(self):
+        game = Game()
+        ws = web.WebSocketResponse()
+        game.add_player(Player(id=str(uuid.uuid4()), ws=ws))
+        game.add_player(Player(id=str(uuid.uuid4()), ws=ws))
+        game.toss()
+        player = [p for p in game.players if p.id != game.whose_turn.id][0]
+
+        with self.assertRaises(NotYourTurnError):
+            game.turn(player, 0)
+
+        player = game.whose_turn
+        game.turn(player, 0)
+        self.assertTrue(game.whose_turn.id != player.id)
+        self.assertEqual(game.grid[0], player.box_type)
 
 
 class WebsocketHandlerTestCase(unittest.TestCase):
@@ -94,7 +113,7 @@ class WebsocketHandlerTestCase(unittest.TestCase):
             }),
             game
         )
-        self.assertEqual(
+        self.assertDictEqual(
             result,
             {
                 'operation': 'turn',
