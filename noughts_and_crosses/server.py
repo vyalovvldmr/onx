@@ -146,8 +146,8 @@ def publish(payload, subscribers):
         subscriber.ws.send_json(payload)
 
 
-def send_error(error_message, player):
-    player.ws.send_json({
+def send_error(error_message, ws):
+    ws.send_json({
         'event': 'error',
         'payload': {
             'message': error_message,
@@ -203,27 +203,36 @@ class WebsocketHandler(web.View):
         await ws.prepare(self.request)
         self.request.app['websockets'].append(ws)
 
-        player = Player(id=self.request.cookies['player_id'], ws=ws)
+        try:
+            player_id = self.request.cookies['player_id']
+        except KeyError:
+            send_error('player_id cookie required', ws)
+        else:
+            player = Player(id=player_id, ws=ws)
 
-        async with GamePool(player) as game:
-            publish_game_state(game)
-            async for message in ws:
-                if message.type == aiohttp.WSMsgType.TEXT:
-                    try:
-                        request = self.validate_request(message.data, game)
-                    except SchemaError as error:
-                        send_error(error.code, player)
-                    else:
+            async with GamePool(player) as game:
+                publish_game_state(game)
+                async for message in ws:
+                    if message.type == aiohttp.WSMsgType.TEXT:
                         try:
-                            game.turn(player, int(request['payload']['turn']))
-                        except NotYourTurnError:
-                            send_error('Not your turn', player)
-                        publish_game_state(game)
-                if message.type == aiohttp.WSMsgType.ERROR:
-                    logging.debug(
-                        'ws connection closed with exception %s',
-                        ws.exception()
-                    )
+                            request = self.validate_request(message.data, game)
+                        except SchemaError as error:
+                            send_error(error.code, ws)
+                        else:
+                            try:
+                                game.turn(
+                                    player,
+                                    int(request['payload']['turn'])
+                                )
+                            except NotYourTurnError:
+                                send_error('Not your turn', ws)
+                            else:
+                                publish_game_state(game)
+                    if message.type == aiohttp.WSMsgType.ERROR:
+                        logging.debug(
+                            'ws connection closed with exception %s',
+                            ws.exception()
+                        )
 
         logging.debug('websocket connection closed')
         self.request.app['websockets'].remove(ws)
@@ -231,10 +240,15 @@ class WebsocketHandler(web.View):
         return ws
 
 
-async def init(loop):
+def get_application(loop):
     app = web.Application(loop=loop)
     app['websockets'] = []
     app.router.add_route('GET', '/ws', WebsocketHandler)
+    return app
+
+
+async def init(loop):
+    app = get_application(loop)
 
     await loop.create_server(
         app.make_handler(),
