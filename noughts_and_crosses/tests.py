@@ -191,16 +191,7 @@ class WebsocketServerTestCase(AioHTTPTestCase):
             {
                 'payload': {
                     'whose_turn': None,
-                    'grid': [
-                        BoxType.empty,
-                        BoxType.empty,
-                        BoxType.empty,
-                        BoxType.empty,
-                        BoxType.empty,
-                        BoxType.empty,
-                        BoxType.empty,
-                        BoxType.empty,
-                        BoxType.empty],
+                    'grid': [BoxType.empty] * Game.grid_size * Game.grid_size,
                     'winner': None,
                     'status': GameStatus.awaiting
                 },
