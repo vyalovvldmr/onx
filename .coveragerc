@@ -1,0 +1,3 @@
+[run]
+source = noughts_and_crosses
+omit = noughts_and_crosses/client.py
