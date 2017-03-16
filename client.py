@@ -6,8 +6,8 @@ import uuid
 
 import websocket
 
-import settings
-from server import BoxType, GameStatus
+from noughts_and_crosses import settings
+from noughts_and_crosses.game import BoxType, GameStatus
 
 
 URL = 'ws://{host}:{port}/ws'.format(
