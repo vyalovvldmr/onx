@@ -2,7 +2,7 @@ import unittest
 import json
 import uuid
 
-from aiohttp.test_utils import AioHTTPTestCase, unittest_run_loop
+from aiohttp.test_utils import AioHTTPTestCase
 
 from noughts_and_crosses.game import (
     Game, BoxType, Player, GameStatus
@@ -12,8 +12,8 @@ from noughts_and_crosses.app import get_application
 
 class WebsocketServerTestCase(AioHTTPTestCase):
 
-    async def get_application(self, loop):
-        return get_application(loop)
+    async def get_application(self):
+        return get_application(self.loop)
 
     async def connect_player(self):
         player_id = str(uuid.uuid4())
@@ -76,7 +76,6 @@ class WebsocketServerTestCase(AioHTTPTestCase):
         else:
             self.acting, self.awaiting = self.players[::-1]
 
-    @unittest_run_loop
     async def test_winning_the_game(self):
         await self.connect_players()
 
@@ -90,7 +89,6 @@ class WebsocketServerTestCase(AioHTTPTestCase):
             expected_winner=self.acting.id
         )
 
-    @unittest_run_loop
     async def test_drawn_game(self):
         await self.connect_players()
 
@@ -104,7 +102,6 @@ class WebsocketServerTestCase(AioHTTPTestCase):
         await self.turn(box_num=5, expected_game_status=GameStatus.in_progress)
         await self.turn(box_num=3, expected_game_status=GameStatus.finished)
 
-    @unittest_run_loop
     async def test_unfinished_game(self):
         await self.connect_players()
 
@@ -112,7 +109,6 @@ class WebsocketServerTestCase(AioHTTPTestCase):
         response = json.loads((await self.awaiting.ws.receive()).data)
         self.assertEqual(response['payload']['status'], GameStatus.unfinished)
 
-    @unittest_run_loop
     async def test_server_errors(self):
         ws = await self.client.ws_connect('/ws')
         response_1 = json.loads((await ws.receive()).data)
@@ -146,6 +142,7 @@ class WebsocketServerTestCase(AioHTTPTestCase):
                 'payload': {'message': 'Box is not empty. Try again.'}
             }
         )
+
 
 if __name__ == '__main__':
     unittest.main()

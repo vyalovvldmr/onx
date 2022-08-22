@@ -27,6 +27,6 @@ class GamePool:
             GamePool._awaiting = None
         if self._game.status == GameStatus.in_progress:
             self._game.status = GameStatus.unfinished
-        publish_game_state(self._game)
+        await publish_game_state(self._game)
         for player in self._game.players:
             await player.ws.close()

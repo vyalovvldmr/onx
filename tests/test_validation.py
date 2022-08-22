@@ -13,7 +13,7 @@ class ValidationTestCase(unittest.TestCase):
 
     maxDiff = None
 
-    def test_validation(self):
+    def test_missing_key_validation(self):
         game = Game()
         with self.assertRaises(SchemaError) as error:
             WebsocketHandler.validate_request(
@@ -22,8 +22,10 @@ class ValidationTestCase(unittest.TestCase):
                 }),
                 game
             )
-        self.assertEqual(error.exception.code, 'Missing keys: \'payload\'')
+        self.assertEqual(error.exception.code, 'Missing key: \'payload\'')
 
+    def test_wrong_turn_number_validation(self):
+        game = Game()
         with self.assertRaises(SchemaError) as error:
             WebsocketHandler.validate_request(
                 json.dumps({
@@ -39,6 +41,8 @@ class ValidationTestCase(unittest.TestCase):
             'Please type a number from 1 to 9.'
         )
 
+    def test_turn_without_second_player_validation(self):
+        game = Game()
         with self.assertRaises(SchemaError) as error:
             WebsocketHandler.validate_request(
                 json.dumps({
@@ -54,6 +58,8 @@ class ValidationTestCase(unittest.TestCase):
             'Turn is applicable for two players game'
         )
 
+    def test_unsupported_operation_validation(self):
+        game = Game()
         game.players = [Player, Player]
 
         with self.assertRaises(SchemaError) as error:
@@ -87,6 +93,8 @@ class ValidationTestCase(unittest.TestCase):
             }
         )
 
+    def test_bo_is_not_empty_validation(self):
+        game = Game()
         game.grid = [BoxType.nought] * Game.grid_size * Game.grid_size
 
         with self.assertRaises(SchemaError) as error:

@@ -54,18 +54,19 @@ class WebsocketHandler(web.View):
         try:
             player_id = self.request.cookies['player_id']
         except KeyError:
-            send_error('player_id cookie required', ws)
+            await send_error('player_id cookie required', ws)
         else:
             player = Player(id=player_id, ws=ws)
 
             async with GamePool(player) as game:
-                publish_game_state(game)
+                await publish_game_state(game)
                 async for message in ws:
+                    print(message)
                     if message.type == aiohttp.WSMsgType.TEXT:
                         try:
                             request = self.validate_request(message.data, game)
                         except SchemaError as error:
-                            send_error(error.code, ws)
+                            await send_error(error.code, ws)
                         else:
                             try:
                                 game.turn(
@@ -73,9 +74,9 @@ class WebsocketHandler(web.View):
                                     int(request['payload']['turn'])
                                 )
                             except NotYourTurnError:
-                                send_error('Not your turn', ws)
+                                await send_error('Not your turn', ws)
                             else:
-                                publish_game_state(game)
+                                await publish_game_state(game)
                     if message.type == aiohttp.WSMsgType.ERROR:
                         logging.debug(
                             'ws connection closed with exception %s',

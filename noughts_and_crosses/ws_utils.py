@@ -1,10 +1,10 @@
-def publish(payload, subscribers):
+async def publish(payload, subscribers):
     for subscriber in subscribers:
-        subscriber.ws.send_json(payload)
+        await subscriber.ws.send_json(payload)
 
 
-def send_error(error_message, ws):
-    ws.send_json({
+async def send_error(error_message, ws):
+    await ws.send_json({
         'event': 'error',
         'payload': {
             'message': error_message,
@@ -12,9 +12,9 @@ def send_error(error_message, ws):
     })
 
 
-def publish_game_state(game):
+async def publish_game_state(game):
     payload = {
         'event': 'game_state',
         'payload': game.to_json()
     }
-    publish(payload, game.players)
+    await publish(payload, game.players)
