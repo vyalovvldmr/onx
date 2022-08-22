@@ -8,8 +8,8 @@ from noughts_and_crosses import settings
 from noughts_and_crosses.app import get_application
 
 
-async def init(loop):
-    app = get_application(loop)
+async def init():
+    app = get_application()
 
     await loop.create_server(
         app.make_handler(),
@@ -35,8 +35,9 @@ if __name__ == '__main__':
     logging.getLogger().addHandler(logging.StreamHandler())
     logging.getLogger().setLevel(settings.LOGGING_LEVEL)
 
-    loop = asyncio.get_event_loop()
-    app = loop.run_until_complete(init(loop))
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    app = loop.run_until_complete(init())
     try:
         loop.run_forever()
     except KeyboardInterrupt:

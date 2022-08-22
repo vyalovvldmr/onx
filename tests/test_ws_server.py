@@ -1,3 +1,4 @@
+import asyncio
 import unittest
 import json
 import uuid
@@ -13,7 +14,7 @@ from noughts_and_crosses.app import get_application
 class WebsocketServerTestCase(AioHTTPTestCase):
 
     async def get_application(self):
-        return get_application(self.loop)
+        return get_application()
 
     async def connect_player(self):
         player_id = str(uuid.uuid4())
@@ -55,7 +56,7 @@ class WebsocketServerTestCase(AioHTTPTestCase):
         if self.players[0].id == whose_turn:
             self.acting, self.awaiting = self.players
         else:
-            self.acting, self.awaiting = self.players[::-1]
+            self.awaiting, self.acting = self.players
 
     async def turn(self, box_num, expected_game_status, expected_winner=None):
         await self.acting.ws.send_json(

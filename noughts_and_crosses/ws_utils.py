@@ -1,6 +1,15 @@
+import logging
+
+
+logger = logging.getLogger(__name__)
+
+
 async def publish(payload, subscribers):
     for subscriber in subscribers:
-        await subscriber.ws.send_json(payload)
+        try:
+            await subscriber.ws.send_json(payload)
+        except ConnectionResetError as e:
+            logger.warning(e)
 
 
 async def send_error(error_message, ws):

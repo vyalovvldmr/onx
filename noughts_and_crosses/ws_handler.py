@@ -61,7 +61,6 @@ class WebsocketHandler(web.View):
             async with GamePool(player) as game:
                 await publish_game_state(game)
                 async for message in ws:
-                    print(message)
                     if message.type == aiohttp.WSMsgType.TEXT:
                         try:
                             request = self.validate_request(message.data, game)

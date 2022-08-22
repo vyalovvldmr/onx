@@ -3,8 +3,8 @@ from aiohttp import web
 from noughts_and_crosses.ws_handler import WebsocketHandler
 
 
-def get_application(loop):
-    app = web.Application(loop=loop)
+def get_application():
+    app = web.Application()
     app['websockets'] = []
     app.router.add_route('GET', '/ws', WebsocketHandler)
     return app
