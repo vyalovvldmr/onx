@@ -65,4 +65,4 @@ TOTAL                                 142      2    99%
 - [ ] Better client
 - [ ] Heroku deployment
 - [ ] Using gRPC
-- [ ] Expand playing board
+- [ ] Expand play board
