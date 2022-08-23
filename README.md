@@ -62,6 +62,7 @@ TOTAL                                 142      2    99%
 - [ ] Set up code linting
 - [ ] Set up mypy
 - [ ] DDD & clean code refactoring
+- [ ] Better client
 - [ ] Heroku deployment
 - [ ] Using gRPC
 - [ ] Expand playing board
