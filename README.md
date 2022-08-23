@@ -57,8 +57,8 @@ TOTAL                                 142      2    99%
 ### TODO
 
 - [x] Bump up Python version from 3.5 to 3.10
-- [ ] Fix deprecations
 - [x] Fix tests stability after bumping aiohttp from 1.3 to 3.8
+- [ ] Migrate from aiohttp to starlette
 - [ ] Set up code linting
 - [ ] Set up mypy
 - [ ] DDD & clean code refactoring
