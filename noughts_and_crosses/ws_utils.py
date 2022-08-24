@@ -12,8 +12,8 @@ async def publish(payload: dict, subscribers: list[Player]) -> None:
     for subscriber in subscribers:
         try:
             await subscriber.ws.send_json(payload)
-        except ConnectionResetError as e:
-            logger.warning(e)
+        except ConnectionResetError as err:
+            logger.warning(err)
 
 
 async def send_error(error_message: str, ws: web.WebSocketResponse) -> None:

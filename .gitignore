@@ -9,6 +9,7 @@ __pycache__/
 .Python
 env/
 venv/
+junit/
 build/
 develop-eggs/
 dist/

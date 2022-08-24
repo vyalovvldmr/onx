@@ -6,7 +6,6 @@ from noughts_and_crosses.errors import NotYourTurnError
 
 
 class BoxType:
-
     empty: int = 1
     nought: int = 2
     cross: int = 3
@@ -28,7 +27,7 @@ class Player:
 
     __slots__ = ["id", "ws", "box_type"]
 
-    def __init__(self, id, ws):
+    def __init__(self, id, ws):  # pylint: disable=W0622
         self.id: int = id
         self.ws: web.WebSocketResponse = ws
         self.box_type: int = BoxType.empty
