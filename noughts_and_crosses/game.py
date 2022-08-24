@@ -1,25 +1,27 @@
 import random
 
+from aiohttp import web
+
 from noughts_and_crosses.errors import NotYourTurnError
 
 
 class BoxType:
 
-    empty = 1
-    nought = 2
-    cross = 3
+    empty: int = 1
+    nought: int = 2
+    cross: int = 3
 
 
 class GameStatus:
 
     # game is waiting for a player
-    awaiting = 1
+    awaiting: int = 1
     # game is in progress
-    in_progress = 2
+    in_progress: int = 2
     # some player gone
-    unfinished = 3
+    unfinished: int = 3
     # game is finished
-    finished = 4
+    finished: int = 4
 
 
 class Player:
@@ -27,16 +29,16 @@ class Player:
     __slots__ = ["id", "ws", "box_type"]
 
     def __init__(self, id, ws):
-        self.id = id
-        self.ws = ws
-        self.box_type = BoxType.empty
+        self.id: int = id
+        self.ws: web.WebSocketResponse = ws
+        self.box_type: int = BoxType.empty
 
 
 class Game:
 
-    grid_size = 3
+    grid_size: int = 3
 
-    winning_lines = (
+    winning_lines: tuple[tuple[int, ...], ...] = (
         (0, 1, 2),
         (3, 4, 5),
         (6, 7, 8),
@@ -47,20 +49,20 @@ class Game:
         (2, 4, 6),
     )
 
-    player_amount = 2
+    player_amount: int = 2
 
-    def __init__(self):
-        self.grid = [BoxType.empty] * Game.grid_size * Game.grid_size
-        self.whose_turn = None
-        self.players = []
-        self.status = GameStatus.awaiting
-        self.winner = None
+    def __init__(self) -> None:
+        self.grid: list[int] = [BoxType.empty] * Game.grid_size * Game.grid_size
+        self.whose_turn: Player | None = None
+        self.players: list[Player] = []
+        self.status: int = GameStatus.awaiting
+        self.winner: Player | None = None
 
-    def add_player(self, player):
+    def add_player(self, player: Player) -> None:
         assert len(self.players) < Game.player_amount, "Max player amount reached."
         self.players.append(player)
 
-    def toss(self):
+    def toss(self) -> None:
         assert (
             len(self.players) == Game.player_amount
         ), "Toss is applicable for two players game"
@@ -71,7 +73,7 @@ class Game:
         self.whose_turn = self.players[random.randint(0, 1)]
         self.status = GameStatus.in_progress
 
-    def to_json(self):
+    def to_json(self) -> dict:
         return {
             "whose_turn": self.whose_turn and self.whose_turn.id or None,
             "grid": self.grid,
@@ -79,11 +81,11 @@ class Game:
             "status": self.status,
         }
 
-    def turn(self, player, turn):
+    def turn(self, player: Player, turn: int) -> None:
         assert (
             len(self.players) == Game.player_amount
         ), "Turn is applicable for two players game"
-        if self.whose_turn.id != player.id:
+        if self.whose_turn is None or self.whose_turn.id != player.id:
             raise NotYourTurnError()
 
         self.grid[turn] = player.box_type
@@ -95,7 +97,7 @@ class Game:
             self.status = GameStatus.finished
 
     @property
-    def is_winner(self):
+    def is_winner(self) -> bool:
         return any(
             map(
                 lambda seq: set(seq) in ({BoxType.cross}, {BoxType.nought}),

@@ -4,11 +4,13 @@ Server for Noughts & Crosses game.
 import asyncio
 import logging
 
+from aiohttp import web
+
 from noughts_and_crosses import settings
 from noughts_and_crosses.app import get_application
 
 
-async def init():
+async def init() -> web.Application:
     app = get_application()
 
     await loop.create_server(
@@ -22,7 +24,7 @@ async def init():
     return app
 
 
-async def shutdown(app):
+async def shutdown(app: web.Application) -> None:
     for ws in app["websockets"]:
         await ws.close()
 

@@ -3,7 +3,7 @@ import logging
 
 import aiohttp
 from aiohttp import web
-from schema import Schema, Use, And, SchemaError
+from schema import Schema, Use, And, SchemaError  # type: ignore
 
 from noughts_and_crosses.game import BoxType, Player, Game
 from noughts_and_crosses.game_pool import GamePool
@@ -13,7 +13,7 @@ from noughts_and_crosses.ws_utils import publish_game_state, send_error
 
 class WebsocketHandler(web.View):
     @staticmethod
-    def validate_request(data, game):
+    def validate_request(data: str, game: Game) -> dict:
         schema = Schema(
             And(
                 Use(json.loads),
@@ -43,7 +43,7 @@ class WebsocketHandler(web.View):
         )
         return schema.validate(data)
 
-    async def get(self):
+    async def get(self) -> web.WebSocketResponse:
         ws = web.WebSocketResponse()
         await ws.prepare(self.request)
         self.request.app["websockets"].append(ws)
