@@ -5,7 +5,7 @@ Client-server Noughts & Crosses game through websockets.
 
 ### Requires
 
-Python 3.10
+Python >= 3.7
 
 ### Installation
 
