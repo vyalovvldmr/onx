@@ -13,17 +13,16 @@ async def publish(payload, subscribers):
 
 
 async def send_error(error_message, ws):
-    await ws.send_json({
-        'event': 'error',
-        'payload': {
-            'message': error_message,
+    await ws.send_json(
+        {
+            "event": "error",
+            "payload": {
+                "message": error_message,
+            },
         }
-    })
+    )
 
 
 async def publish_game_state(game):
-    payload = {
-        'event': 'game_state',
-        'payload': game.to_json()
-    }
+    payload = {"event": "game_state", "payload": game.to_json()}
     await publish(payload, game.players)

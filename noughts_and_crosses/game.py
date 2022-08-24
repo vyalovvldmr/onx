@@ -24,7 +24,7 @@ class GameStatus:
 
 class Player:
 
-    __slots__ = ['id', 'ws', 'box_type']
+    __slots__ = ["id", "ws", "box_type"]
 
     def __init__(self, id, ws):
         self.id = id
@@ -37,8 +37,14 @@ class Game:
     grid_size = 3
 
     winning_lines = (
-        (0, 1, 2), (3, 4, 5), (6, 7, 8), (0, 3, 6),
-        (1, 4, 7), (2, 5, 8), (0, 4, 8), (2, 4, 6)
+        (0, 1, 2),
+        (3, 4, 5),
+        (6, 7, 8),
+        (0, 3, 6),
+        (1, 4, 7),
+        (2, 5, 8),
+        (0, 4, 8),
+        (2, 4, 6),
     )
 
     player_amount = 2
@@ -51,13 +57,13 @@ class Game:
         self.winner = None
 
     def add_player(self, player):
-        assert len(self.players) < Game.player_amount, \
-            'Max player amount reached.'
+        assert len(self.players) < Game.player_amount, "Max player amount reached."
         self.players.append(player)
 
     def toss(self):
-        assert len(self.players) == Game.player_amount, \
-            'Toss is applicable for two players game'
+        assert (
+            len(self.players) == Game.player_amount
+        ), "Toss is applicable for two players game"
         box_types = [BoxType.nought, BoxType.cross]
         random.shuffle(box_types)
         for box_type, player in zip(box_types, self.players):
@@ -67,15 +73,16 @@ class Game:
 
     def to_json(self):
         return {
-            'whose_turn': self.whose_turn and self.whose_turn.id or None,
-            'grid': self.grid,
-            'winner': self.winner and self.winner.id or None,
-            'status': self.status,
+            "whose_turn": self.whose_turn and self.whose_turn.id or None,
+            "grid": self.grid,
+            "winner": self.winner and self.winner.id or None,
+            "status": self.status,
         }
 
     def turn(self, player, turn):
-        assert len(self.players) == Game.player_amount, \
-            'Turn is applicable for two players game'
+        assert (
+            len(self.players) == Game.player_amount
+        ), "Turn is applicable for two players game"
         if self.whose_turn.id != player.id:
             raise NotYourTurnError()
 
@@ -92,9 +99,6 @@ class Game:
         return any(
             map(
                 lambda seq: set(seq) in ({BoxType.cross}, {BoxType.nought}),
-                map(
-                    lambda line: (self.grid[i] for i in line),
-                    Game.winning_lines
-                )
+                map(lambda line: (self.grid[i] for i in line), Game.winning_lines),
             )
         )
