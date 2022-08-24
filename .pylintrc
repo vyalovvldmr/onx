@@ -1,8 +1,6 @@
-[MAIN]
+[pylint]
 py-version = 3.10
 disable=
     missing-docstring,
     too-few-public-methods,
-
-[BASIC]
 good-names=ws,id
