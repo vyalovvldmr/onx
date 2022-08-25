@@ -3,8 +3,11 @@ import uuid
 from random import randint
 from contextlib import suppress
 from enum import IntEnum
+import logging
 
+import click
 import aiohttp
+from aiohttp import web
 from aiohttp.client_exceptions import ClientConnectionError
 from rich.panel import Panel
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
@@ -21,6 +24,7 @@ from textual import events
 
 from ttt.version import VERSION
 from ttt import settings
+from ttt.app import get_application
 
 
 class WebsocketConnectionState(IntEnum):
@@ -193,4 +197,48 @@ class GameApp(App):
         self._footer.on_disconnect()
 
 
-GameApp.run(title=f"Noughts & Crosses v{VERSION}")
+async def run_server() -> web.Application:
+    app = get_application()
+
+    await asyncio.get_event_loop().create_server(
+        app.make_handler(), settings.SERVER_IP, settings.SERVER_PORT
+    )
+
+    logging.info(
+        "server started at ws://%s:%s", settings.SERVER_IP, settings.SERVER_PORT
+    )
+
+    return app
+
+
+async def shutdown_server(app: web.Application) -> None:
+    for ws in app["websockets"]:
+        await ws.close()
+
+
+@click.command()
+@click.option('-d', '--daemon', is_flag=True, help='Run server.')
+def main(daemon):
+    """
+    Noughts & Crosses game. Client and server command.
+    """
+    if daemon:
+        logging.getLogger().addHandler(logging.StreamHandler())
+        logging.getLogger().setLevel(settings.LOGGING_LEVEL)
+
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        app = loop.run_until_complete(run_server())
+        try:
+            loop.run_forever()
+        except KeyboardInterrupt:
+            logging.info("server is shutting down")
+        finally:
+            loop.run_until_complete(shutdown_server(app))
+            loop.close()
+    else:
+        GameApp.run(title=f"Noughts & Crosses v{VERSION}")
+
+
+if __name__ == '__main__':
+    main()
