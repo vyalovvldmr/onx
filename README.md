@@ -16,13 +16,15 @@ $ cd noughts_and_crosses
 $ pip install -r requirements.txt
 ```
 
+### Run client
+
+`python ttt.py`
+
+![TUI screenshot](screen.png)
+
 ### Run server
 
 `python server.py`
-
-### Run client
-
-`python client.py`
 
 ### Run tests
 
