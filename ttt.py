@@ -8,6 +8,7 @@ from pyfiglet import Figlet
 from textual.app import App
 from textual.views import GridView
 from textual.widget import Widget
+from textual.widgets import Footer
 from textual.reactive import Reactive
 from textual import events
 
@@ -78,7 +79,12 @@ class Grid(GridView):
 
 class SimpleApp(App):
     async def on_mount(self) -> None:
+        footer = Footer()
+        await self.view.dock(footer, edge="bottom")
         await self.view.dock(Grid())
+
+    async def on_load(self) -> None:
+        await self.bind("q", "quit", "Quit")
 
 
 SimpleApp.run()
