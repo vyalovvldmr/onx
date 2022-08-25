@@ -11,8 +11,8 @@ Python 3.10
 ### Installation
 
 ```
-$ git clone git@github.com:vyalow/noughts_and_crosses.git
-$ cd noughts_and_crosses
+$ git clone git@github.com:vyalow/ttt.git
+$ cd ttt
 $ pip install -r requirements.txt
 ```
 
@@ -24,11 +24,12 @@ $ pip install -r requirements.txt
 
 ### Run server
 
-`python server.py`
+`python ttt.py -d`
 
 ### Run tests
 
 ```
+$ pip install -r requirements-dev.txt
 $ pytest --cov
 =========================== test session starts ================================
 platform darwin -- Python 3.10.5, pytest-7.1.2, pluggy-1.0.0
@@ -64,7 +65,7 @@ TOTAL                                 142      2    99%
 - [x] Set up code linting
 - [x] Set up mypy
 - [ ] DDD & clean code refactoring
-- [ ] Better client
+- [x] Better client
 - [ ] Add to PyPI
 - [ ] Heroku deployment
 - [ ] Migrate from aiohttp to starlette or migrate from websockets to gRPC
