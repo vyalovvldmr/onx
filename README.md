@@ -61,11 +61,11 @@ TOTAL                                 142      2    99%
 
 - [x] Bump up Python version from 3.5 to 3.10
 - [x] Fix tests stability after bumping aiohttp from 1.3 to 3.8
-- [ ] Migrate from aiohttp to starlette
 - [x] Set up code linting
 - [x] Set up mypy
 - [ ] DDD & clean code refactoring
 - [ ] Better client
 - [ ] Heroku deployment
-- [ ] Using gRPC
+- [ ] Migrate from aiohttp to starlette or migrate from websockets to gRPC
 - [ ] Expand play board
+- [ ] Add gameplay with a computer
