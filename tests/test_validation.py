@@ -3,10 +3,10 @@ import json
 
 from schema import SchemaError
 
-from noughts_and_crosses.game import (
+from ttt.game import (
     Game, BoxType, Player
 )
-from noughts_and_crosses.ws_handler import WebsocketHandler
+from ttt.ws_handler import WebsocketHandler
 
 
 class ValidationTestCase(unittest.TestCase):

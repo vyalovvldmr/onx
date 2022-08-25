@@ -2,7 +2,7 @@ import logging
 
 from aiohttp import web
 
-from noughts_and_crosses.game import Player, Game
+from ttt.game import Player, Game
 
 
 logger = logging.getLogger(__name__)

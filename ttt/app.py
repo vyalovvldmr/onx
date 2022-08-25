@@ -1,6 +1,6 @@
 from aiohttp import web
 
-from noughts_and_crosses.ws_handler import WebsocketHandler
+from ttt.ws_handler import WebsocketHandler
 
 
 def get_application() -> web.Application:

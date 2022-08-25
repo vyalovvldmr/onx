@@ -6,8 +6,8 @@ import logging
 
 from aiohttp import web
 
-from noughts_and_crosses import settings
-from noughts_and_crosses.app import get_application
+from ttt import settings
+from ttt.app import get_application
 
 
 async def init() -> web.Application:

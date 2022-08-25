@@ -3,10 +3,10 @@ import uuid
 
 from aiohttp import web
 
-from noughts_and_crosses.game import (
+from ttt.game import (
     Game, BoxType, Player, GameStatus
 )
-from noughts_and_crosses.errors import NotYourTurnError
+from ttt.errors import NotYourTurnError
 
 
 class GameTestCase(unittest.TestCase):

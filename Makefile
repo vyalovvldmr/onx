@@ -1,7 +1,7 @@
 lint:
-	black noughts_and_crosses
-	mypy noughts_and_crosses
-	pylint noughts_and_crosses
+	black ttt
+	mypy ttt
+	pylint ttt
 test:
 	pytest --cov
 push: lint test

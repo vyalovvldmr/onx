@@ -5,10 +5,10 @@ import aiohttp
 from aiohttp import web
 from schema import Schema, Use, And, SchemaError  # type: ignore
 
-from noughts_and_crosses.game import BoxType, Player, Game
-from noughts_and_crosses.game_pool import GamePool
-from noughts_and_crosses.errors import NotYourTurnError
-from noughts_and_crosses.ws_utils import publish_game_state, send_error
+from ttt.game import BoxType, Player, Game
+from ttt.game_pool import GamePool
+from ttt.errors import NotYourTurnError
+from ttt.ws_utils import publish_game_state, send_error
 
 
 class WebsocketHandler(web.View):

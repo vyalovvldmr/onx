@@ -5,10 +5,10 @@ import uuid
 
 from aiohttp.test_utils import AioHTTPTestCase
 
-from noughts_and_crosses.game import (
+from ttt.game import (
     Game, BoxType, Player, GameStatus
 )
-from noughts_and_crosses.app import get_application
+from ttt.app import get_application
 
 
 class WebsocketServerTestCase(AioHTTPTestCase):

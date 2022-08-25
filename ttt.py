@@ -19,8 +19,8 @@ from textual.widgets import Footer as _Footer, Header as _Header
 from textual.reactive import Reactive
 from textual import events
 
-from noughts_and_crosses.version import VERSION
-from noughts_and_crosses import settings
+from ttt.version import VERSION
+from ttt import settings
 
 
 class WebsocketConnectionState(IntEnum):

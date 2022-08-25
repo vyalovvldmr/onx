@@ -6,8 +6,8 @@ import uuid
 
 import websocket
 
-from noughts_and_crosses import settings
-from noughts_and_crosses.game import BoxType, GameStatus
+from ttt import settings
+from ttt.game import BoxType, GameStatus
 
 
 URL = "ws://{host}:{port}/ws".format(host=settings.SERVER_IP, port=settings.SERVER_PORT)

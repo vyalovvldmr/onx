@@ -1,7 +1,7 @@
 from types import TracebackType
 
-from noughts_and_crosses.ws_utils import publish_game_state
-from noughts_and_crosses.game import Player, Game, GameStatus
+from ttt.ws_utils import publish_game_state
+from ttt.game import Player, Game, GameStatus
 
 
 class GamePool:

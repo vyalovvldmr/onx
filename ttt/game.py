@@ -2,7 +2,7 @@ import random
 
 from aiohttp import web
 
-from noughts_and_crosses.errors import NotYourTurnError
+from ttt.errors import NotYourTurnError
 
 
 class BoxType:
