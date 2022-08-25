@@ -217,7 +217,7 @@ async def shutdown_server(app: web.Application) -> None:
 
 
 @click.command()
-@click.option('-d', '--daemon', is_flag=True, help='Run server.')
+@click.option("-d", "--daemon", is_flag=True, help="Run server.")
 def main(daemon):
     """
     Noughts & Crosses game. Client and server command.
@@ -240,5 +240,5 @@ def main(daemon):
         GameApp.run(title=f"Noughts & Crosses v{VERSION}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
