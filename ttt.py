@@ -1,6 +1,6 @@
 from random import randint
 
-from noughts_and_crosses.version import version
+from noughts_and_crosses.version import VERSION
 
 from rich.panel import Panel
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
@@ -104,4 +104,4 @@ class SimpleApp(App):
         await self.bind("q", "quit", "Quit")
 
 
-SimpleApp.run(title=f"Noughts & Crosses v{version}")
+SimpleApp.run(title=f"Noughts & Crosses v{VERSION}")
