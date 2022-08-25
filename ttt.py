@@ -1,16 +1,33 @@
 from random import randint
 
+from noughts_and_crosses.version import version
+
 from rich.panel import Panel
-from rich.console import Console, ConsoleOptions, RenderResult
+from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.text import Text
 from rich.align import Align
+from rich.table import Table
 from pyfiglet import Figlet
 from textual.app import App
 from textual.views import GridView
 from textual.widget import Widget
-from textual.widgets import Footer
+from textual.widgets import Footer, Header as _Header
 from textual.reactive import Reactive
 from textual import events
+
+
+class Header(_Header):
+    def render(self) -> RenderableType:
+        header_table = Table.grid(padding=(0, 1), expand=True)
+        header_table.style = self.style
+        header_table.add_column("title", justify="center", ratio=1)
+        header_table.add_column("clock", justify="right", width=8)
+        header_table.add_row(
+            self.full_title, self.get_clock() if self.clock else ""
+        )
+        header: RenderableType
+        header = Panel(header_table, style=self.style) if self.tall else header_table
+        return header
 
 
 class FigletText:
@@ -79,12 +96,12 @@ class Grid(GridView):
 
 class SimpleApp(App):
     async def on_mount(self) -> None:
-        footer = Footer()
-        await self.view.dock(footer, edge="bottom")
+        await self.view.dock(Header(style="", clock=False), edge="top")
+        await self.view.dock(Footer(), edge="bottom")
         await self.view.dock(Grid())
 
     async def on_load(self) -> None:
         await self.bind("q", "quit", "Quit")
 
 
-SimpleApp.run()
+SimpleApp.run(title=f"Noughts & Crosses v{version}")
