@@ -36,7 +36,6 @@ class FigletText:
 
 
 class Hover(Widget):
-
     mouse_over = Reactive(False)
 
     def __init__(self, name: str | None = None) -> None:

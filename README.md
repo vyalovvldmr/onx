@@ -2,7 +2,7 @@
 
 [![RunTests](https://github.com/vyalovvldmr/noughts_and_crosses/actions/workflows/run_tests.yml/badge.svg)](https://github.com/vyalovvldmr/noughts_and_crosses/actions/workflows/run_tests.yml)
 
-Client-server Noughts & Crosses game (Tic Tac Toe) through websockets with TUI.
+Client-server Noughts & Crosses (Tic Tac Toe) terminal based game through websockets.
 
 ### Requires
 
