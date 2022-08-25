@@ -2,9 +2,7 @@
 
 [![RunTests](https://github.com/vyalovvldmr/noughts_and_crosses/actions/workflows/run_tests.yml/badge.svg)](https://github.com/vyalovvldmr/noughts_and_crosses/actions/workflows/run_tests.yml)
 
-Code example for a job application.
-
-Client-server Noughts & Crosses game through websockets.
+Client-server Noughts & Crosses game (Tic Tac Toe) through websockets with TUI.
 
 ### Requires
 
