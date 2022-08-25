@@ -1,7 +1,9 @@
+import asyncio
+import uuid
 from random import randint
 
-from noughts_and_crosses.version import VERSION
-
+import aiohttp
+from aiohttp.client_exceptions import ClientConnectionError
 from rich.panel import Panel
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.text import Text
@@ -11,9 +13,12 @@ from pyfiglet import Figlet
 from textual.app import App
 from textual.views import GridView
 from textual.widget import Widget
-from textual.widgets import Footer, Header as _Header
+from textual.widgets import Footer as _Footer, Header as _Header
 from textual.reactive import Reactive
 from textual import events
+
+from noughts_and_crosses.version import VERSION
+from noughts_and_crosses import settings
 
 
 class Header(_Header):
@@ -22,12 +27,20 @@ class Header(_Header):
         header_table.style = self.style
         header_table.add_column("title", justify="center", ratio=1)
         header_table.add_column("clock", justify="right", width=8)
-        header_table.add_row(
-            self.full_title, self.get_clock() if self.clock else ""
-        )
+        header_table.add_row(self.full_title, self.get_clock() if self.clock else "")
         header: RenderableType
         header = Panel(header_table, style=self.style) if self.tall else header_table
         return header
+
+
+class Footer(_Footer):
+    def render(self) -> RenderableType:
+        if self._key_text is None:
+            self._key_text = self.make_key_text()
+            self._key_text.append_text(Text("Connected"))
+            # self._key_text.append_text(Text("Connected"))
+            # self._key_text.remove_suffix("Connected")
+        return self._key_text
 
 
 class FigletText:
@@ -85,23 +98,45 @@ class Hover(Widget):
 class Grid(GridView):
     def on_mount(self, event: events.Mount) -> None:
         self.grid.set_gap(1, 0)
-        self.grid.set_gutter(10)
+        self.grid.set_gutter(1)
         self.grid.set_align("center", "center")
 
-        self.grid.add_column("col", min_size=10, max_size=30, repeat=3)
-        self.grid.add_row("row", min_size=10, max_size=30, repeat=3)
+        self.grid.add_column("col", min_size=5, max_size=30, repeat=3)
+        self.grid.add_row("row", min_size=5, max_size=30, repeat=3)
 
         self.grid.place(*(Hover() for _ in range(9)))
 
 
-class SimpleApp(App):
+class GameApp(App):
     async def on_mount(self) -> None:
         await self.view.dock(Header(style="", clock=False), edge="top")
         await self.view.dock(Footer(), edge="bottom")
         await self.view.dock(Grid())
 
     async def on_load(self) -> None:
+        asyncio.ensure_future(self.keep_connection())
         await self.bind("q", "quit", "Quit")
 
+    @staticmethod
+    async def keep_connection():
+        URL = "ws://{host}:{port}/ws".format(
+            host=settings.SERVER_IP, port=settings.SERVER_PORT
+        )
+        player_id = str(uuid.uuid4())
+        while True:
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.ws_connect(
+                        URL,
+                        headers={
+                            "Cookie": "player_id={player_id}".format(player_id=player_id)
+                        },
+                    ) as ws:
+                        async for msg in ws:
+                            pass
+            except ClientConnectionError:
+                pass
+            await asyncio.sleep(1)
 
-SimpleApp.run(title=f"Noughts & Crosses v{VERSION}")
+
+GameApp.run(title=f"Noughts & Crosses v{VERSION}")
