@@ -65,6 +65,7 @@ TOTAL                                 142      2    99%
 - [x] Set up mypy
 - [ ] DDD & clean code refactoring
 - [ ] Better client
+- [ ] Add to PyPI
 - [ ] Heroku deployment
 - [ ] Migrate from aiohttp to starlette or migrate from websockets to gRPC
 - [ ] Expand play board
