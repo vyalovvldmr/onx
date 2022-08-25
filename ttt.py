@@ -129,7 +129,9 @@ class GameApp(App):
                     async with session.ws_connect(
                         URL,
                         headers={
-                            "Cookie": "player_id={player_id}".format(player_id=player_id)
+                            "Cookie": "player_id={player_id}".format(
+                                player_id=player_id
+                            )
                         },
                     ) as ws:
                         async for msg in ws:
