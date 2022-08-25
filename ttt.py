@@ -1,6 +1,8 @@
 import asyncio
 import uuid
 from random import randint
+from contextlib import suppress
+from enum import IntEnum
 
 import aiohttp
 from aiohttp.client_exceptions import ClientConnectionError
@@ -21,6 +23,19 @@ from noughts_and_crosses.version import VERSION
 from noughts_and_crosses import settings
 
 
+class WebsocketConnectionState(IntEnum):
+    CONNECTED = 1
+    DISCONNECTED = 2
+
+
+class Connect(events.Event):
+    pass
+
+
+class Disconnect(events.Event):
+    pass
+
+
 class Header(_Header):
     def render(self) -> RenderableType:
         header_table = Table.grid(padding=(0, 1), expand=True)
@@ -34,13 +49,29 @@ class Header(_Header):
 
 
 class Footer(_Footer):
+    def __init__(self) -> None:
+        super().__init__()
+        self._connection_text: str = "Disconnected"
+        self._connection_style: str = "white on dark_red"
+
     def render(self) -> RenderableType:
         if self._key_text is None:
             self._key_text = self.make_key_text()
-            self._key_text.append_text(Text("Connected"))
-            # self._key_text.append_text(Text("Connected"))
-            # self._key_text.remove_suffix("Connected")
+            self._key_text.append_text(Text(f"| Websocket: {self._connection_text}"))
+            self._key_text.style = self._connection_style
         return self._key_text
+
+    def on_connect(self):
+        self._key_text = None
+        self._connection_text = "Connected"
+        self._connection_style = "white on dark_green"
+        self.refresh()
+
+    def on_disconnect(self):
+        self._key_text = None
+        self._connection_text = "Disconnected"
+        self._connection_style = "white on dark_red"
+        self.refresh()
 
 
 class FigletText:
@@ -83,20 +114,20 @@ class Hover(Widget):
             style=("on red" if self.mouse_over else ""),
         )
 
-    def on_enter(self) -> None:
+    async def on_enter(self) -> None:
         self.mouse_over = True
 
-    def on_leave(self) -> None:
+    async def on_leave(self) -> None:
         self.mouse_over = False
 
-    def on_click(self, event: events.Click) -> None:
+    async def on_click(self, event: events.Click) -> None:
         if self._state is None:
             self._state = "0X"[randint(0, 1)]
             self.refresh()
 
 
 class Grid(GridView):
-    def on_mount(self, event: events.Mount) -> None:
+    async def on_mount(self, event: events.Mount) -> None:
         self.grid.set_gap(1, 0)
         self.grid.set_gutter(1)
         self.grid.set_align("center", "center")
@@ -108,23 +139,29 @@ class Grid(GridView):
 
 
 class GameApp(App):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._footer = Footer()
+        self._websocket_connection_state: WebsocketConnectionState = (
+            WebsocketConnectionState.DISCONNECTED
+        )
+
     async def on_mount(self) -> None:
         await self.view.dock(Header(style="", clock=False), edge="top")
-        await self.view.dock(Footer(), edge="bottom")
+        await self.view.dock(self._footer, edge="bottom")
         await self.view.dock(Grid())
 
     async def on_load(self) -> None:
         asyncio.ensure_future(self.keep_connection())
         await self.bind("q", "quit", "Quit")
 
-    @staticmethod
-    async def keep_connection():
+    async def keep_connection(self):
         URL = "ws://{host}:{port}/ws".format(
             host=settings.SERVER_IP, port=settings.SERVER_PORT
         )
         player_id = str(uuid.uuid4())
         while True:
-            try:
+            with suppress(ClientConnectionError):
                 async with aiohttp.ClientSession() as session:
                     async with session.ws_connect(
                         URL,
@@ -134,11 +171,26 @@ class GameApp(App):
                             )
                         },
                     ) as ws:
+                        if (
+                            self._websocket_connection_state
+                            == WebsocketConnectionState.DISCONNECTED
+                        ):
+                            self._websocket_connection_state = (
+                                WebsocketConnectionState.CONNECTED
+                            )
+                            self.post_message_no_wait(Connect(self))
                         async for msg in ws:
                             pass
-            except ClientConnectionError:
-                pass
+            if self._websocket_connection_state == WebsocketConnectionState.CONNECTED:
+                self._websocket_connection_state = WebsocketConnectionState.DISCONNECTED
+                self.post_message_no_wait(Disconnect(self))
             await asyncio.sleep(1)
+
+    async def on_connect(self):
+        self._footer.on_connect()
+
+    async def on_disconnect(self):
+        self._footer.on_disconnect()
 
 
 GameApp.run(title=f"Noughts & Crosses v{VERSION}")
