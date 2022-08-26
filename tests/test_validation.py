@@ -4,7 +4,7 @@ import json
 from schema import SchemaError
 
 from ttt.game import Game, BoxType, Player
-from ttt.ws_handler import WebsocketHandler
+from ttt.handler import WebsocketHandler
 
 
 class ValidationTestCase(unittest.TestCase):

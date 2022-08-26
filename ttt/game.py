@@ -1,9 +1,15 @@
 import random
+import logging
+from types import TracebackType
 
 from aiohttp import web
 
 from ttt.errors import NotYourTurnError
 from ttt import settings
+from ttt.api import WsEvent, WsGameStateEvent, WsGameStatePayload
+
+
+logger = logging.getLogger(__name__)
 
 
 class BoxType:
@@ -73,7 +79,7 @@ class Game:
         self.whose_turn = self.players[random.randint(0, 1)]
         self.status = GameStatus.in_progress
 
-    def to_json(self) -> dict:
+    def to_dict(self) -> dict:
         return {
             "whose_turn": self.whose_turn and self.whose_turn.id or None,
             "grid": self.grid,
@@ -104,3 +110,48 @@ class Game:
                 map(lambda line: (self.grid[i] for i in line), Game.winning_lines),
             )
         )
+
+    async def publish_state(self) -> None:
+        payload = WsEvent(
+            data=WsGameStateEvent(payload=WsGameStatePayload(**self.to_dict()))
+        )
+        for subscriber in self.players:
+            try:
+                await subscriber.ws.send_json(payload.dict())
+            except ConnectionResetError as err:
+                logger.warning(err)
+
+
+class GamePool:
+
+    _awaiting: Game | None = None
+
+    def __init__(self, player: Player):
+        self._player: Player = player
+        self._game: Game | None = None
+
+    async def __aenter__(self) -> Game:
+        if GamePool._awaiting:
+            self._game, GamePool._awaiting = GamePool._awaiting, None
+            self._game.add_player(self._player)
+            self._game.toss()
+        else:
+            self._game = Game()
+            self._game.add_player(self._player)
+            GamePool._awaiting = self._game
+        return self._game
+
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
+        if GamePool._awaiting is self._game:
+            GamePool._awaiting = None
+        if self._game is not None:
+            if self._game.status == GameStatus.in_progress:
+                self._game.status = GameStatus.unfinished
+            await self._game.publish_state()
+            for player in self._game.players:
+                await player.ws.close()

@@ -25,7 +25,7 @@ from ttt.version import VERSION
 from ttt import settings
 from ttt.app import get_application
 from ttt.game import BoxType, GameStatus
-from ttt.ws_utils import WsEvent, WsGameStateEvent, WsOperation, WsOperationPayload
+from ttt.api import WsGameStateEvent, WsEvent, WsOperationPayload, WsOperation
 
 
 class WebsocketConnectionState(IntEnum):

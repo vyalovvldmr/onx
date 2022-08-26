@@ -68,7 +68,7 @@ class GameTestCase(unittest.TestCase):
     def test_to_json(self):
         game = Game()
         self.assertDictEqual(
-            game.to_json(),
+            game.to_dict(),
             {
                 "whose_turn": None,
                 "grid": [BoxType.empty] * Game.grid_size * Game.grid_size,

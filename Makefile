@@ -1,5 +1,5 @@
 lint:
-	black .
+	black --check .
 	flake8
 	mypy ttt
 	pylint ttt

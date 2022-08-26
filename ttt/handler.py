@@ -5,10 +5,9 @@ import aiohttp
 from aiohttp import web
 from schema import Schema, Use, And, SchemaError  # type: ignore
 
-from ttt.game import BoxType, Player, Game
-from ttt.game_pool import GamePool
+from ttt.game import BoxType, Player, Game, GamePool
 from ttt.errors import NotYourTurnError
-from ttt.ws_utils import publish_game_state, send_error
+from ttt.api import WsErrorEventPayload, WsErrorEvent, WsEvent
 
 
 class WebsocketHandler(web.View):
@@ -43,6 +42,14 @@ class WebsocketHandler(web.View):
         )
         return schema.validate(data)
 
+    @staticmethod
+    async def send_error(error_message: str, ws: web.WebSocketResponse) -> None:
+        await ws.send_json(
+            WsEvent(
+                data=WsErrorEvent(payload=WsErrorEventPayload(message=error_message))
+            ).dict()
+        )
+
     async def get(self) -> web.WebSocketResponse:
         ws = web.WebSocketResponse()
         await ws.prepare(self.request)
@@ -51,25 +58,25 @@ class WebsocketHandler(web.View):
         try:
             player_id = self.request.cookies["player_id"]
         except KeyError:
-            await send_error("player_id cookie required", ws)
+            await self.send_error("player_id cookie required", ws)
         else:
             player = Player(id=player_id, ws=ws)
 
             async with GamePool(player) as game:
-                await publish_game_state(game)
+                await game.publish_state()
                 async for message in ws:
                     if message.type == aiohttp.WSMsgType.TEXT:
                         try:
                             request = self.validate_request(message.data, game)
                         except SchemaError as error:
-                            await send_error(error.code, ws)
+                            await self.send_error(error.code, ws)
                         else:
                             try:
                                 game.turn(player, int(request["payload"]["turn"]))
                             except NotYourTurnError:
-                                await send_error("Not your turn", ws)
+                                await self.send_error("Not your turn", ws)
                             else:
-                                await publish_game_state(game)
+                                await game.publish_state()
                     if message.type == aiohttp.WSMsgType.ERROR:
                         logging.debug(
                             "ws connection closed with exception %s", ws.exception()
