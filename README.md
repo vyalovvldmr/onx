@@ -18,13 +18,17 @@ $ pip install -r requirements.txt
 
 ### Run game
 
-`python ttt.py`
+```
+$ python ttt.py
+```
 
 ![TUI screenshot](screen.png)
 
 ### Run server
 
-`python ttt.py -d`
+```
+$ python ttt.py -d
+```
 
 ### Run tests
 
