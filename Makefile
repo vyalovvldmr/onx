@@ -1,5 +1,6 @@
 lint:
 	black .
+	flake8
 	mypy ttt
 	pylint ttt
 test: lint

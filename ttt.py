@@ -1,6 +1,5 @@
 import asyncio
 import uuid
-from random import randint
 from contextlib import suppress
 from enum import IntEnum
 import logging
