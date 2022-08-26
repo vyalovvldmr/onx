@@ -227,8 +227,8 @@ class GameApp(App):
             ):
                 self._header.state = "Looser"
             elif (
-                    self.game_status == GameStatus.finished
-                    and event.data.payload.winner == self._player_id
+                self.game_status == GameStatus.finished
+                and event.data.payload.winner == self._player_id
             ):
                 self._header.state = "Winner"
             elif self.game_status == GameStatus.awaiting:
