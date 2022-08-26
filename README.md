@@ -8,7 +8,7 @@ Client-server Noughts & Crosses (Tic Tac Toe) terminal based, multiplayer game t
 
 Python 3.10
 
-### Installation
+### Install
 
 ```
 $ git clone git@github.com:vyalow/ttt.git
@@ -16,7 +16,7 @@ $ cd ttt
 $ pip install -r requirements.txt
 ```
 
-### Run client
+### Run game
 
 `python ttt.py`
 

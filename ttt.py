@@ -140,8 +140,8 @@ class Grid(GridView):
         self.grid.set_gutter(1)
         self.grid.set_align("center", "center")
 
-        self.grid.add_column("col", min_size=5, max_size=30, repeat=3)
-        self.grid.add_row("row", min_size=5, max_size=30, repeat=3)
+        self.grid.add_column("col", min_size=5, max_size=30, repeat=settings.GRID_SIZE)
+        self.grid.add_row("row", min_size=5, max_size=30, repeat=settings.GRID_SIZE)
 
         self.grid.place(*self.tiles)
 
