@@ -22,7 +22,7 @@ jobs:
         python -m pip install -r requirements.txt -r requirements-dev.txt
     - name: Linting
       run: |
-        black --check ttt
+        black --check .
         mypy ttt
         pylint ttt
     - name: Test with pytest

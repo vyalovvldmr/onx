@@ -3,6 +3,7 @@ import random
 from aiohttp import web
 
 from ttt.errors import NotYourTurnError
+from ttt import settings
 
 
 class BoxType:
@@ -35,7 +36,7 @@ class Player:
 
 class Game:
 
-    grid_size: int = 3
+    grid_size: int = settings.GRID_SIZE
 
     winning_lines: tuple[tuple[int, ...], ...] = (
         (0, 1, 2),

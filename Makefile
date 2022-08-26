@@ -1,6 +1,5 @@
 lint:
-	black ttt
-	black ttt.py
+	black .
 	mypy ttt
 	pylint ttt
 test: lint

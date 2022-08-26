@@ -3,9 +3,7 @@ import uuid
 
 from aiohttp import web
 
-from ttt.game import (
-    Game, BoxType, Player, GameStatus
-)
+from ttt.game import Game, BoxType, Player, GameStatus
 from ttt.errors import NotYourTurnError
 
 
@@ -16,15 +14,27 @@ class GameTestCase(unittest.TestCase):
     def test_is_winner(self):
         game = Game()
         game.grid = [
-            BoxType.nought, BoxType.cross, BoxType.cross,
-            BoxType.nought, BoxType.empty, BoxType.empty,
-            BoxType.nought, BoxType.empty, BoxType.empty,
+            BoxType.nought,
+            BoxType.cross,
+            BoxType.cross,
+            BoxType.nought,
+            BoxType.empty,
+            BoxType.empty,
+            BoxType.nought,
+            BoxType.empty,
+            BoxType.empty,
         ]
         self.assertTrue(game.is_winner)
         game.grid = [
-            BoxType.nought, BoxType.cross, BoxType.cross,
-            BoxType.nought, BoxType.nought, BoxType.empty,
-            BoxType.cross, BoxType.nought, BoxType.cross,
+            BoxType.nought,
+            BoxType.cross,
+            BoxType.cross,
+            BoxType.nought,
+            BoxType.nought,
+            BoxType.empty,
+            BoxType.cross,
+            BoxType.nought,
+            BoxType.cross,
         ]
         self.assertFalse(game.is_winner)
 
@@ -60,13 +70,13 @@ class GameTestCase(unittest.TestCase):
         self.assertDictEqual(
             game.to_json(),
             {
-                'whose_turn': None,
-                'grid': [BoxType.empty] * Game.grid_size * Game.grid_size,
-                'winner': None,
-                'status': GameStatus.awaiting,
-            }
+                "whose_turn": None,
+                "grid": [BoxType.empty] * Game.grid_size * Game.grid_size,
+                "winner": None,
+                "status": GameStatus.awaiting,
+            },
         )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

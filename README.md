@@ -2,7 +2,7 @@
 
 [![RunTests](https://github.com/vyalovvldmr/noughts_and_crosses/actions/workflows/run_tests.yml/badge.svg)](https://github.com/vyalovvldmr/noughts_and_crosses/actions/workflows/run_tests.yml)
 
-Client-server Noughts & Crosses (Tic Tac Toe) terminal based game through websockets.
+Client-server Noughts & Crosses (Tic Tac Toe) terminal based, multiplayer game through websockets.
 
 ### Requires
 
@@ -64,6 +64,7 @@ TOTAL                                 142      2    99%
 - [x] Fix tests stability after bumping aiohttp from 1.3 to 3.8
 - [x] Set up code linting
 - [x] Set up mypy
+- [ ] Fix aiohttp deprecations
 - [ ] DDD & clean code refactoring
 - [x] Better client
 - [ ] Add to PyPI
