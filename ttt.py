@@ -42,12 +42,14 @@ class Disconnect(events.Event):
 
 
 class Header(_Header):
+    state = Reactive("Waiting")
+
     def render(self) -> RenderableType:
         header_table = Table.grid(padding=(0, 1), expand=True)
         header_table.style = self.style
         header_table.add_column("title", justify="center", ratio=1)
-        header_table.add_column("clock", justify="right", width=8)
-        header_table.add_row(self.full_title, self.get_clock() if self.clock else "")
+        header_table.add_column("state", justify="right", width=8)
+        header_table.add_row(self.full_title, self.state)
         header: RenderableType
         header = Panel(header_table, style=self.style) if self.tall else header_table
         return header
@@ -147,6 +149,7 @@ class Grid(GridView):
 class GameApp(App):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._header = Header(style="")
         self._footer: Footer = Footer()
         self._grid: Grid = Grid()
         self._player_id = str(uuid.uuid4())
@@ -163,7 +166,7 @@ class GameApp(App):
         )
 
     async def on_mount(self) -> None:
-        await self.view.dock(Header(style="", clock=False), edge="top")
+        await self.view.dock(self._header, edge="top")
         await self.view.dock(self._footer, edge="bottom")
         await self.view.dock(self._grid)
 
@@ -208,6 +211,28 @@ class GameApp(App):
         if isinstance(event.data, WsGameStateEvent):
             self.game_status = event.data.payload.status
             self.whose_turn = event.data.payload.whose_turn
+            if (
+                self.game_status == GameStatus.in_progress
+                and self.whose_turn == self._player_id
+            ):
+                self._header.state = "Your turn"
+            elif (
+                self.game_status == GameStatus.in_progress
+                and self.whose_turn != self._player_id
+            ):
+                self._header.state = "Waiting"
+            elif (
+                self.game_status == GameStatus.finished
+                and event.data.payload.winner != self._player_id
+            ):
+                self._header.state = "Looser"
+            elif (
+                    self.game_status == GameStatus.finished
+                    and event.data.payload.winner == self._player_id
+            ):
+                self._header.state = "Winner"
+            elif self.game_status == GameStatus.awaiting:
+                self._header.state = "Waiting"
             for num, box_type in enumerate(event.data.payload.grid):
                 self._grid.tiles[num]._text = self._box_types[box_type]
                 self._grid.tiles[num].refresh()
