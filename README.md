@@ -35,31 +35,6 @@ $ python ttt.py -d
 ```
 $ pip install -r requirements-dev.txt
 $ pytest --cov
-=========================== test session starts ================================
-platform darwin -- Python 3.10.5, pytest-7.1.2, pluggy-1.0.0
-rootdir: ttt
-plugins: cov-3.0.0
-collected 13 items                    
-
-tests/test_game.py ....         [ 30%]
-tests/test_validation.py .....  [ 69%]
-tests/test_ws_server.py ....    [100%]
-
----------- coverage: platform darwin, python 3.10.5-final-0 ----------
-Name              Stmts   Miss  Cover
--------------------------------------
-ttt/__init__.py       0      0   100%
-ttt/api.py           22      0   100%
-ttt/app.py            7      0   100%
-ttt/errors.py         2      0   100%
-ttt/game.py          90      1    99%
-ttt/handler.py       43      1    98%
-ttt/settings.py       6      0   100%
--------------------------------------
-TOTAL               170      2    99%
-
-
-============================ 13 passed in 0.29s ================================
 ```
 
 ### TODO
