@@ -42,7 +42,7 @@ class Player:
         self.box_type: int = BoxType.empty
 
 
-@dataclass
+@dataclass(eq=True, frozen=True)
 class GameContext:
     winning_length: int = settings.DEFAULT_WINNING_LENGTH
     grid_size: int = settings.DEFAULT_GRID_SIZE
@@ -188,7 +188,7 @@ class Game:
 
 class GamePool:
 
-    _awaiting: Game | None = None
+    _awaiting: dict[GameContext, Game] = {}
 
     def __init__(self, context: GameContext, player: Player):
         self._context: GameContext = context
@@ -196,14 +196,15 @@ class GamePool:
         self._game: Game | None = None
 
     async def __aenter__(self) -> Game:
-        if GamePool._awaiting:
-            self._game, GamePool._awaiting = GamePool._awaiting, None
+        if self._context in GamePool._awaiting:
+            self._game = GamePool._awaiting[self._context]
+            del GamePool._awaiting[self._context]
             self._game.add_player(self._player)
             self._game.toss()
         else:
             self._game = Game(self._context)
             self._game.add_player(self._player)
-            GamePool._awaiting = self._game
+            GamePool._awaiting[self._context] = self._game
         await self._game.publish_state()
         return self._game
 
@@ -213,8 +214,11 @@ class GamePool:
         exc_val: BaseException | None,
         exc_tb: TracebackType | None,
     ) -> None:
-        if GamePool._awaiting is self._game:
-            GamePool._awaiting = None
+        if (
+            self._context in GamePool._awaiting
+            and GamePool._awaiting[self._context] is self._game
+        ):
+            del GamePool._awaiting[self._context]
         if self._game is not None:
             if self._game.status == GameStatus.in_progress:
                 self._game.status = GameStatus.unfinished
