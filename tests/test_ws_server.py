@@ -4,7 +4,7 @@ import uuid
 
 from aiohttp.test_utils import AioHTTPTestCase
 
-from ttt.game import Game, BoxType, Player, GameStatus
+from ttt.game import BoxType, Player, GameStatus
 from ttt.app import get_application
 
 
@@ -28,7 +28,7 @@ class WebsocketServerTestCase(AioHTTPTestCase):
                 "data": {
                     "payload": {
                         "whose_turn": None,
-                        "grid": [BoxType.empty] * Game.grid_size * Game.grid_size,
+                        "grid": [BoxType.empty] * 9,
                         "winner": None,
                         "status": GameStatus.awaiting,
                     },

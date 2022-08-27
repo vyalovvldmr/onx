@@ -1,13 +1,14 @@
 import logging
 
 
-SERVER_IP = "127.0.0.1"
+SERVER_IP = "0.0.0.0"
 
 SERVER_PORT = "8080"
 
 LOGGING_LEVEL = logging.DEBUG
 
-# non changeable value for now
-GRID_SIZE = 3
-
 CLIENT_RECONNECT_TIMEOUT = 1
+
+DEFAULT_GRID_SIZE = 3
+
+DEFAULT_WINNING_LENGTH = 3

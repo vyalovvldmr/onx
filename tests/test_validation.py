@@ -3,7 +3,7 @@ import json
 
 from schema import SchemaError
 
-from ttt.game import Game, BoxType, Player
+from ttt.game import Game, BoxType, Player, GameContext
 from ttt.handler import WebsocketHandler
 
 
@@ -12,13 +12,13 @@ class ValidationTestCase(unittest.TestCase):
     maxDiff = None
 
     def test_missing_key_validation(self):
-        game = Game()
+        game = Game(GameContext())
         with self.assertRaises(SchemaError) as error:
             WebsocketHandler.validate_request(json.dumps({"operation": "turn"}), game)
         self.assertEqual(error.exception.code, "Missing key: 'payload'")
 
     def test_wrong_turn_number_validation(self):
-        game = Game()
+        game = Game(GameContext())
         with self.assertRaises(SchemaError) as error:
             WebsocketHandler.validate_request(
                 json.dumps(
@@ -31,10 +31,10 @@ class ValidationTestCase(unittest.TestCase):
                 ),
                 game,
             )
-        self.assertEqual(error.exception.code, "Please type a number from 1 to 9.")
+        self.assertEqual(error.exception.code, "Invalid turn number.")
 
     def test_turn_without_second_player_validation(self):
-        game = Game()
+        game = Game(GameContext())
         with self.assertRaises(SchemaError) as error:
             WebsocketHandler.validate_request(
                 json.dumps(
@@ -52,7 +52,7 @@ class ValidationTestCase(unittest.TestCase):
         )
 
     def test_unsupported_operation_validation(self):
-        game = Game()
+        game = Game(GameContext())
         game.players = [Player, Player]
 
         with self.assertRaises(SchemaError) as error:
@@ -91,8 +91,8 @@ class ValidationTestCase(unittest.TestCase):
         )
 
     def test_bo_is_not_empty_validation(self):
-        game = Game()
-        game.grid = [BoxType.nought] * Game.grid_size * Game.grid_size
+        game = Game(GameContext())
+        game.grid = [BoxType.nought] * game.context.grid_size**2
 
         with self.assertRaises(SchemaError) as error:
             WebsocketHandler.validate_request(

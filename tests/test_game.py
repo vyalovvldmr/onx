@@ -3,7 +3,7 @@ import uuid
 
 from aiohttp import web
 
-from ttt.game import Game, BoxType, Player, GameStatus
+from ttt.game import Game, BoxType, Player, GameStatus, GameContext
 from ttt.errors import NotYourTurnError
 
 
@@ -12,7 +12,10 @@ class GameTestCase(unittest.TestCase):
     maxDiff = None
 
     def test_is_winner(self):
-        game = Game()
+        game = Game(GameContext())
+        ws = web.WebSocketResponse()
+        player = Player(id=str(uuid.uuid4()), ws=ws)
+        player.box_type = BoxType.nought
         game.grid = [
             BoxType.nought,
             BoxType.cross,
@@ -24,7 +27,7 @@ class GameTestCase(unittest.TestCase):
             BoxType.empty,
             BoxType.empty,
         ]
-        self.assertTrue(game.is_winner)
+        self.assertTrue(game.is_winner(player, 0))
         game.grid = [
             BoxType.nought,
             BoxType.cross,
@@ -36,10 +39,25 @@ class GameTestCase(unittest.TestCase):
             BoxType.nought,
             BoxType.cross,
         ]
-        self.assertFalse(game.is_winner)
+        self.assertFalse(game.is_winner(player, 0))
+
+    def test_gen_winning_lines(self):
+        game = Game(GameContext(grid_size=4))
+        self.assertEqual(
+            game.gen_winning_lines(14), [[12, 13, 14, 15], [6, 10, 14], [4, 9, 14]]
+        )
+        self.assertEqual(
+            game.gen_winning_lines(5),
+            [[4, 5, 6, 7], [1, 5, 9, 13], [0, 5, 10, 15], [2, 5, 8]],
+        )
+        game = Game(GameContext(grid_size=3))
+        self.assertEqual(
+            game.gen_winning_lines(7),
+            [[6, 7, 8], [1, 4, 7]],
+        )
 
     def test_turn(self):
-        game = Game()
+        game = Game(GameContext())
         ws = web.WebSocketResponse()
         game.add_player(Player(id=str(uuid.uuid4()), ws=ws))
         game.add_player(Player(id=str(uuid.uuid4()), ws=ws))
@@ -55,7 +73,7 @@ class GameTestCase(unittest.TestCase):
         self.assertEqual(game.grid[0], player.box_type)
 
     def test_toss(self):
-        game = Game()
+        game = Game(GameContext())
         ws = web.WebSocketResponse()
         game.add_player(Player(id=str(uuid.uuid4()), ws=ws))
         game.add_player(Player(id=str(uuid.uuid4()), ws=ws))
@@ -65,13 +83,13 @@ class GameTestCase(unittest.TestCase):
         self.assertIn(game.whose_turn, game.players)
         self.assertEqual(game.status, GameStatus.in_progress)
 
-    def test_to_json(self):
-        game = Game()
+    def test_to_dict(self):
+        game = Game(GameContext())
         self.assertDictEqual(
             game.to_dict(),
             {
                 "whose_turn": None,
-                "grid": [BoxType.empty] * Game.grid_size * Game.grid_size,
+                "grid": [BoxType.empty] * game.context.grid_size**2,
                 "winner": None,
                 "status": GameStatus.awaiting,
             },

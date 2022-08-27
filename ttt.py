@@ -129,10 +129,11 @@ class Tile(Widget):
 
 
 class Grid(GridView):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, grid_size: int = settings.DEFAULT_GRID_SIZE, **kwargs):
         super().__init__(*args, **kwargs)
+        self._grid_size = grid_size
         self.tiles: tuple[Tile] = tuple(
-            Tile(num=i) for i in range(settings.GRID_SIZE**2)
+            Tile(num=i) for i in range(self._grid_size**2)
         )
 
     async def on_mount(self, event: events.Mount) -> None:
@@ -140,18 +141,26 @@ class Grid(GridView):
         self.grid.set_gutter(1, 1)
         self.grid.set_align("center", "center")
 
-        self.grid.add_column("col", min_size=5, max_size=30, repeat=settings.GRID_SIZE)
-        self.grid.add_row("row", min_size=5, max_size=30, repeat=settings.GRID_SIZE)
+        self.grid.add_column("col", min_size=5, max_size=30, repeat=self._grid_size)
+        self.grid.add_row("row", min_size=5, max_size=30, repeat=self._grid_size)
 
         self.grid.place(*self.tiles)
 
 
 class GameApp(App):
-    def __init__(self, *args, **kwargs):
+    def __init__(
+        self,
+        *args,
+        grid_size: int = settings.DEFAULT_GRID_SIZE,
+        winning_length: int = settings.DEFAULT_WINNING_LENGTH,
+        **kwargs,
+    ):
         super().__init__(*args, **kwargs)
         self._header: Header = Header(style="")
         self._footer: Footer = Footer()
-        self._grid: Grid = Grid()
+        self._grid: Grid = Grid(grid_size=grid_size)
+        self._winning_length: int = winning_length
+        self._grid_size: int = grid_size
         self._player_id: str = str(uuid.uuid4())
         self._ws: None | web.WebSocketResponse = None
         self._game_status: int = GameStatus.awaiting
@@ -173,7 +182,6 @@ class GameApp(App):
     async def on_load(self) -> None:
         asyncio.ensure_future(self.keep_connection())
         await self.bind("n", "new_game", "New Game")
-        await self.bind("m", "toggle_menu", "Menu")
         await self.bind("q", "quit", "Quit")
 
     async def action_new_game(self) -> None:
@@ -189,9 +197,9 @@ class GameApp(App):
                     async with session.ws_connect(
                         URL,
                         headers={
-                            "Cookie": "player_id={player_id}".format(
-                                player_id=self._player_id
-                            )
+                            "Cookie": f"player_id={self._player_id};"
+                            f"grid_size={self._grid_size};"
+                            f"winning_length={self._winning_length}"
                         },
                     ) as ws:
                         if (
@@ -274,9 +282,23 @@ async def shutdown_server(app: web.Application) -> None:
         await ws.close()
 
 
-@click.command()
+@click.command(context_settings=dict(help_option_names=["-h", "--help"]))
 @click.option("-d", "--daemon", is_flag=True, help="Run server.")
-def main(daemon: bool) -> None:
+@click.option(
+    "-g",
+    "--grid-size",
+    help="Grid size = 3 by default.",
+    default=3,
+    type=click.IntRange(min=3, max=7),
+)
+@click.option(
+    "-w",
+    "--winning-length",
+    help="Winning sequence length = 3 by default.",
+    default=3,
+    type=click.IntRange(min=3, max=5),
+)
+def main(daemon: bool, grid_size: int, winning_length: int) -> None:
     """
     Noughts & Crosses game. Client and server command.
     """
@@ -295,7 +317,11 @@ def main(daemon: bool) -> None:
             loop.run_until_complete(shutdown_server(app))
             loop.close()
     else:
-        GameApp.run(title=f"Noughts & Crosses v{VERSION}")
+        GameApp.run(
+            title=f"Noughts & Crosses v{VERSION}",
+            grid_size=grid_size,
+            winning_length=winning_length,
+        )
 
 
 if __name__ == "__main__":

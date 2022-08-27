@@ -73,5 +73,5 @@ TOTAL               170      2    99%
 - [ ] Add to PyPI
 - [ ] Heroku deployment
 - [ ] Migrate from aiohttp to starlette or migrate from websockets to gRPC
-- [ ] Expand play board
+- [x] Expand play board
 - [ ] Add gameplay with a computer

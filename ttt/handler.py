@@ -5,9 +5,10 @@ import aiohttp
 from aiohttp import web
 from schema import Schema, Use, And, SchemaError  # type: ignore
 
-from ttt.game import BoxType, Player, Game, GamePool
+from ttt.game import BoxType, Player, Game, GamePool, GameContext
 from ttt.errors import NotYourTurnError
 from ttt.api import WsErrorEventPayload, WsErrorEvent, WsEvent
+from ttt import settings
 
 
 class WebsocketHandler(web.View):
@@ -24,8 +25,8 @@ class WebsocketHandler(web.View):
                         "turn": And(
                             int,
                             Schema(
-                                lambda x: x in range(9),
-                                error="Please type a number from 1 to 9.",
+                                lambda x: x in range(game.context.grid_size**2),
+                                error="Invalid turn number.",
                             ),
                             Schema(
                                 lambda x: game.grid[x] == BoxType.empty,
@@ -60,10 +61,17 @@ class WebsocketHandler(web.View):
         except KeyError:
             await self.send_error("player_id cookie required", ws)
         else:
+            try:
+                greed_size = int(str(self.request.cookies.get("grid_size")))
+            except (TypeError, ValueError):
+                greed_size = settings.DEFAULT_GRID_SIZE
+            try:
+                winning_length = int(str(self.request.cookies.get("winning_length")))
+            except (TypeError, ValueError):
+                winning_length = settings.DEFAULT_WINNING_LENGTH
             player = Player(id=player_id, ws=ws)
-
-            async with GamePool(player) as game:
-                await game.publish_state()
+            context = GameContext(grid_size=greed_size, winning_length=winning_length)
+            async with GamePool(context, player) as game:
                 async for message in ws:
                     if message.type == aiohttp.WSMsgType.TEXT:
                         try:
