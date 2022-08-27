@@ -42,7 +42,7 @@ class Disconnect(events.Event):
 
 
 class Header(_Header):
-    state = Reactive("Waiting")
+    state: Reactive = Reactive("Waiting")
 
     def render(self) -> RenderableType:
         header_table = Table.grid(padding=(0, 1), expand=True)
@@ -68,13 +68,13 @@ class Footer(_Footer):
             self._key_text.style = self._connection_style
         return self._key_text
 
-    def on_connect(self):
+    def on_connect(self) -> None:
         self._key_text = None
         self._connection_text = "Connected"
         self._connection_style = "white on dark_green"
         self.refresh()
 
-    def on_disconnect(self):
+    def on_disconnect(self) -> None:
         self._key_text = None
         self._connection_text = "Disconnected"
         self._connection_style = "white on dark_red"
@@ -83,7 +83,7 @@ class Footer(_Footer):
 
 class FigletText:
     def __init__(self, text: str) -> None:
-        self.text = text
+        self.text: str = text
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -110,7 +110,7 @@ class Tile(Widget):
     def __init__(self, name: str | None = None, num: int | None = None) -> None:
         super().__init__(name)
         self.text: str = ""
-        self._num = num
+        self._num: int = num
 
     def render(self) -> Panel:
         return Panel(
@@ -149,14 +149,14 @@ class Grid(GridView):
 class GameApp(App):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._header = Header(style="")
+        self._header: Header = Header(style="")
         self._footer: Footer = Footer()
         self._grid: Grid = Grid()
-        self._player_id = str(uuid.uuid4())
+        self._player_id: str = str(uuid.uuid4())
         self._ws: None | web.WebSocketResponse = None
-        self.game_status: int = GameStatus.awaiting
-        self.whose_turn: str = ""
-        self._box_types = {
+        self._game_status: int = GameStatus.awaiting
+        self._whose_turn: str = ""
+        self._box_types: dict = {
             BoxType.empty: " ",
             BoxType.nought: "0",
             BoxType.cross: "X",
@@ -173,12 +173,13 @@ class GameApp(App):
     async def on_load(self) -> None:
         asyncio.ensure_future(self.keep_connection())
         await self.bind("n", "new_game", "New Game")
+        await self.bind("m", "toggle_menu", "Menu")
         await self.bind("q", "quit", "Quit")
 
-    async def action_new_game(self):
+    async def action_new_game(self) -> None:
         await self._ws.close()
 
-    async def keep_connection(self):
+    async def keep_connection(self) -> None:
         URL = "ws://{host}:{port}/ws".format(
             host=settings.SERVER_IP, port=settings.SERVER_PORT
         )
@@ -213,29 +214,29 @@ class GameApp(App):
 
     async def on_ws_event(self, event: WsEvent) -> None:
         if isinstance(event.data, WsGameStateEvent):
-            self.game_status = event.data.payload.status
-            self.whose_turn = event.data.payload.whose_turn
+            self._game_status = event.data.payload.status
+            self._whose_turn = event.data.payload.whose_turn
             if (
-                self.game_status == GameStatus.in_progress
-                and self.whose_turn == self._player_id
+                self._game_status == GameStatus.in_progress
+                and self._whose_turn == self._player_id
             ):
                 self._header.state = "Your turn"
             elif (
-                self.game_status == GameStatus.in_progress
-                and self.whose_turn != self._player_id
+                self._game_status == GameStatus.in_progress
+                and self._whose_turn != self._player_id
             ):
                 self._header.state = "Waiting"
             elif (
-                self.game_status == GameStatus.finished
+                self._game_status == GameStatus.finished
                 and event.data.payload.winner != self._player_id
             ):
                 self._header.state = "Looser"
             elif (
-                self.game_status == GameStatus.finished
+                self._game_status == GameStatus.finished
                 and event.data.payload.winner == self._player_id
             ):
                 self._header.state = "Winner"
-            elif self.game_status == GameStatus.awaiting:
+            elif self._game_status == GameStatus.awaiting:
                 self._header.state = "Waiting"
             for num, box_type in enumerate(event.data.payload.grid):
                 self._grid.tiles[num].text = self._box_types[box_type]
@@ -243,8 +244,8 @@ class GameApp(App):
 
     async def make_turn(self, tile_num: int) -> None:
         if (
-            self.game_status == GameStatus.in_progress
-            and self.whose_turn == self._player_id
+            self._game_status == GameStatus.in_progress
+            and self._whose_turn == self._player_id
         ):
             try:
                 await self._ws.send_json(
@@ -275,7 +276,7 @@ async def shutdown_server(app: web.Application) -> None:
 
 @click.command()
 @click.option("-d", "--daemon", is_flag=True, help="Run server.")
-def main(daemon):
+def main(daemon: bool) -> None:
     """
     Noughts & Crosses game. Client and server command.
     """
