@@ -135,15 +135,21 @@ class Grid(GridView):
         self.tiles: tuple[Tile] = tuple(
             Tile(num=i) for i in range(self._grid_size**2)
         )
+        if self._grid_size >= 11:
+            self._col_size, self._row_size = 5, 3
+        elif self._grid_size >= 9:
+            self._col_size, self._row_size = 6, 4
+        elif self._grid_size >= 6:
+            self._col_size, self._row_size = 8, 5
+        elif self._grid_size == 5:
+            self._col_size, self._row_size = 15, 8
+        else:
+            self._col_size, self._row_size = 20, 9
 
     async def on_mount(self, event: events.Mount) -> None:
-        self.grid.set_gap(1, 0)
-        self.grid.set_gutter(1, 1)
         self.grid.set_align("center", "center")
-
-        self.grid.add_column("col", min_size=5, max_size=30, repeat=self._grid_size)
-        self.grid.add_row("row", min_size=5, max_size=30, repeat=self._grid_size)
-
+        self.grid.add_column("col", size=self._col_size, repeat=self._grid_size)
+        self.grid.add_row("row", size=self._row_size, repeat=self._grid_size)
         self.grid.place(*self.tiles)
 
 
@@ -289,7 +295,7 @@ async def shutdown_server(app: web.Application) -> None:
     "--grid-size",
     help="Grid size = 3 by default.",
     default=3,
-    type=click.IntRange(min=3, max=7),
+    type=click.IntRange(min=3, max=14),
 )
 @click.option(
     "-w",
