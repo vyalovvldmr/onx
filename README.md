@@ -22,7 +22,17 @@ $ pip install -r requirements.txt
 $ python ttt.py
 ```
 
-![TUI screenshot](screen.png)
+![TUI screenshot 1](static/screen1.png)
+
+Command line option `-g` or `--grid-size` changes grid size.
+Option `-w` or `--wining-length` changes winning sequence length.
+Option `-h` or `--help` prints help.
+
+```
+$ python ttt.py -g14 -w3
+```
+
+![TUI screenshot 1](static/screen2.png)
 
 ### Run server
 
