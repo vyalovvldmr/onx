@@ -109,12 +109,12 @@ class Tile(Widget):
 
     def __init__(self, name: str | None = None, num: int | None = None) -> None:
         super().__init__(name)
-        self._text: str = ""
+        self.text: str = ""
         self._num = num
 
     def render(self) -> Panel:
         return Panel(
-            Align.center(FigletText(self._text), vertical="middle"),
+            Align.center(FigletText(self.text), vertical="middle"),
             style=("on red" if self.mouse_over else ""),
         )
 
@@ -137,7 +137,7 @@ class Grid(GridView):
 
     async def on_mount(self, event: events.Mount) -> None:
         self.grid.set_gap(1, 0)
-        self.grid.set_gutter(1)
+        self.grid.set_gutter(1, 1)
         self.grid.set_align("center", "center")
 
         self.grid.add_column("col", min_size=5, max_size=30, repeat=settings.GRID_SIZE)
@@ -172,7 +172,11 @@ class GameApp(App):
 
     async def on_load(self) -> None:
         asyncio.ensure_future(self.keep_connection())
+        await self.bind("n", "new_game", "New Game")
         await self.bind("q", "quit", "Quit")
+
+    async def action_new_game(self):
+        await self._ws.close()
 
     async def keep_connection(self):
         URL = "ws://{host}:{port}/ws".format(
@@ -234,7 +238,7 @@ class GameApp(App):
             elif self.game_status == GameStatus.awaiting:
                 self._header.state = "Waiting"
             for num, box_type in enumerate(event.data.payload.grid):
-                self._grid.tiles[num]._text = self._box_types[box_type]
+                self._grid.tiles[num].text = self._box_types[box_type]
                 self._grid.tiles[num].refresh()
 
     async def make_turn(self, tile_num: int) -> None:
