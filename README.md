@@ -11,15 +11,13 @@ Python 3.10
 ## Install
 
 ```
-$ git clone git@github.com:vyalow/ttt.git
-$ cd ttt
-$ pip install -r requirements.txt
+$ pip install ttt
 ```
 
 ## Play Game
 
 ```
-$ python ttt.py
+$ ttt
 ```
 
 ![TUI screenshot 1](static/screen1.png)
@@ -29,7 +27,7 @@ Option `-w` or `--wining-length` changes winning sequence length.
 Option `-h` or `--help` prints help.
 
 ```
-$ python ttt.py -g14 -w3
+$ ttt -g14 -w3
 ```
 
 ![TUI screenshot 1](static/screen2.png)
@@ -46,19 +44,21 @@ $ export PORT=8888
 Run server
 
 ```
-$ python ttt.py -d
+$ ttt -d
 ```
 
 Run client
 
 ```
-$ python ttt.py
+$ ttt
 ```
 
 ## Run Tests
 
 ```
-$ pip install -r requirements-dev.txt
+$ git clone git@github.com:vyalow/ttt.git
+$ cd ttt
+$ pip install -r requirements.txt -r requirements-dev.txt
 $ pytest --cov
 ```
 
@@ -70,8 +70,8 @@ $ pytest --cov
 - [x] Set up mypy
 - [ ] Fix aiohttp deprecations
 - [x] Better client
-- [ ] Add to PyPI
-- [ ] Heroku deployment
+- [x] Add to PyPI
+- [x] Heroku deployment
 - [ ] Migrate from aiohttp to starlette or migrate from websockets to gRPC
 - [x] Expand play board
 - [ ] Add gameplay with a computer
