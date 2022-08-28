@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "onx"
 version = "0.1.1"
-description = "Client-server Tic Tac Toe (Noughts & Crosses) terminal based, online game through websockets."
+description = "Client-server Noughts & Crosses (Tic Tac Toe) terminal based, online game through websockets."
 authors = ["Vladimir Vyalov <vyalov.v@gmail.com>"]
 license = "GPL-3.0-only"
 readme = "README.md"
