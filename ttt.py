@@ -194,14 +194,15 @@ class GameApp(App):
         await self._ws.close()
 
     async def keep_connection(self) -> None:
-        URL = "wss://{host}:{port}/ws".format(
-            host=settings.SERVER_IP, port=settings.SERVER_PORT
+        URL = "ws://{host}:{port}/ws".format(
+            host=settings.SERVER_HOST, port=settings.SERVER_PORT
         )
         while True:
             with suppress(ClientConnectionError):
                 async with aiohttp.ClientSession() as session:
                     async with session.ws_connect(
                         URL,
+                        heartbeat=settings.WS_HEARTBEAT_TIMEOUT,
                         headers={
                             "Cookie": f"player_id={self._player_id};"
                             f"grid_size={self._grid_size};"
@@ -273,11 +274,11 @@ async def run_server() -> web.Application:
     app = get_application()
 
     await asyncio.get_event_loop().create_server(
-        app.make_handler(), settings.SERVER_IP, settings.SERVER_PORT
+        app.make_handler(), settings.SERVER_HOST, settings.SERVER_PORT
     )
 
     logging.info(
-        "server started at ws://%s:%s", settings.SERVER_IP, settings.SERVER_PORT
+        "server started at ws://%s:%s", settings.SERVER_HOST, settings.SERVER_PORT
     )
 
     return app

@@ -2,11 +2,13 @@ import logging
 import os
 
 
-# SERVER_IP = "vyalovvldmr-ttt.herokuapp.com"
-SERVER_IP = "0.0.0.0"
-SERVER_PORT = int(os.environ.get("PORT", 8080))
+SERVER_HOST = os.environ.get("LOCALHOST", "vyalovvldmr-ttt.herokuapp.com")
+
+SERVER_PORT = int(os.environ.get("PORT", 80))
 
 LOGGING_LEVEL = logging.DEBUG
+
+WS_HEARTBEAT_TIMEOUT = 10
 
 CLIENT_RECONNECT_TIMEOUT = 1
 
