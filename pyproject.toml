@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "onx"
-version = "0.1.0"
+version = "0.1.1"
 description = "Client-server Tic Tac Toe (Noughts & Crosses) terminal based, online game through websockets."
 authors = ["Vladimir Vyalov <vyalov.v@gmail.com>"]
 license = "GPL-3.0-only"
@@ -25,6 +25,10 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Intended Audience :: Developers",
+]
+packages = [
+    { include = "onx" },
+    { include = "run.py" },
 ]
 
 [tool.poetry.dependencies]
