@@ -20,7 +20,7 @@ $ pip install onx
 $ onx
 ```
 
-![TUI screenshot 1](static/screen1.png)
+![TUI screenshot 1](https://github.com/vyalovvldmr/onx/blob/master/static/screen1.png?raw=true)
 
 Command line option `-g` or `--grid-size` changes grid size.
 Option `-w` or `--wining-length` changes winning sequence length.
@@ -30,7 +30,7 @@ Option `-h` or `--help` prints help.
 $ onx -g14 -w3
 ```
 
-![TUI screenshot 1](static/screen2.png)
+![TUI screenshot 1](https://github.com/vyalovvldmr/onx/blob/master/static/screen2.png?raw=true)
 
 ## Run Server and Client Locally
 
