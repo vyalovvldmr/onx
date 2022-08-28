@@ -1,0 +1,2 @@
+run:
+  web: python ttt.py -d
