@@ -194,7 +194,7 @@ class GameApp(App):
         await self._ws.close()
 
     async def keep_connection(self) -> None:
-        URL = "ws://{host}:{port}/ws".format(
+        URL = "wss://{host}:{port}/ws".format(
             host=settings.SERVER_IP, port=settings.SERVER_PORT
         )
         while True:

@@ -1,9 +1,9 @@
 import logging
 
 
+# SERVER_IP = "vyalovvldmr-ttt.herokuapp.com"
 SERVER_IP = "0.0.0.0"
-
-SERVER_PORT = "8080"
+SERVER_PORT = "80"
 
 LOGGING_LEVEL = logging.DEBUG
 
