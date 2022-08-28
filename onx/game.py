@@ -21,7 +21,6 @@ class BoxType:
 
 
 class GameStatus:
-
     # game is waiting for a player
     awaiting: int = 1
     # game is in progress
@@ -32,14 +31,11 @@ class GameStatus:
     finished: int = 4
 
 
+@dataclass
 class Player:
-
-    __slots__ = ["id", "ws", "box_type"]
-
-    def __init__(self, id, ws):  # pylint: disable=W0622
-        self.id: int = id
-        self.ws: web.WebSocketResponse = ws
-        self.box_type: int = BoxType.empty
+    id: str
+    ws: web.WebSocketResponse
+    box_type: int = BoxType.empty
 
 
 @dataclass(eq=True, frozen=True)
