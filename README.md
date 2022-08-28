@@ -2,7 +2,7 @@
 
 [![RunTests](https://github.com/vyalovvldmr/ttt/actions/workflows/run_tests.yml/badge.svg)](https://github.com/vyalovvldmr/ttt/actions/workflows/run_tests.yml)
 
-Client-server Tic Tac Toe (Noughts & Crosses) terminal based, multiplayer game through websockets.
+Client-server Tic Tac Toe (Noughts & Crosses) terminal based, online game through websockets.
 
 ## Requires
 
