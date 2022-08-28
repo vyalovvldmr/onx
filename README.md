@@ -1,14 +1,14 @@
-# Noughts & Crosses
+# Tic Tac Toe (Noughts & Crosses)
 
 [![RunTests](https://github.com/vyalovvldmr/ttt/actions/workflows/run_tests.yml/badge.svg)](https://github.com/vyalovvldmr/ttt/actions/workflows/run_tests.yml)
 
-Client-server Noughts & Crosses (Tic Tac Toe) terminal based, multiplayer game through websockets.
+Client-server Tic Tac Toe (Noughts & Crosses) terminal based, multiplayer game through websockets.
 
-### Requires
+## Requires
 
 Python 3.10
 
-### Install
+## Install
 
 ```
 $ git clone git@github.com:vyalow/ttt.git
@@ -16,7 +16,7 @@ $ cd ttt
 $ pip install -r requirements.txt
 ```
 
-### Run game
+## Play Game
 
 ```
 $ python ttt.py
@@ -34,20 +34,35 @@ $ python ttt.py -g14 -w3
 
 ![TUI screenshot 1](static/screen2.png)
 
-### Run server
+## Run Server and Client Locally
+
+Set up env variables.
+
+```
+$ export LOCALHOST="0.0.0.0"
+$ export PORT=8888
+```
+
+Run server
 
 ```
 $ python ttt.py -d
 ```
 
-### Run tests
+Run client
+
+```
+$ python ttt.py
+```
+
+## Run Tests
 
 ```
 $ pip install -r requirements-dev.txt
 $ pytest --cov
 ```
 
-### TODO
+## TODO
 
 - [x] Bump up Python version from 3.5 to 3.10
 - [x] Fix tests stability after bumping aiohttp from 1.3 to 3.8
