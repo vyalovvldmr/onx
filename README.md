@@ -72,6 +72,8 @@ $ pytest --cov
 - [x] Add to PyPI
 - [x] Heroku deployment
 - [x] Expand play board
+- [ ] Deal with textual rendering issues: [711](Textualize/textual/issues/711), [710](Textualize/textual/issues/710)
+- [ ] Add Dockerfile
 - [ ] Fix aiohttp deprecations
 - [ ] Migrate from aiohttp to starlette or gRPC or even Blockchain
 - [ ] Add gameplay with a computer
