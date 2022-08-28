@@ -73,5 +73,5 @@ $ pytest --cov
 - [x] Heroku deployment
 - [x] Expand play board
 - [ ] Fix aiohttp deprecations
-- [ ] Migrate from aiohttp to starlette or to gRPC or even to blockchain
+- [ ] Migrate from aiohttp to starlette or gRPC or even Blockchain
 - [ ] Add gameplay with a computer
