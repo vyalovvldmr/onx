@@ -68,10 +68,10 @@ $ pytest --cov
 - [x] Fix tests stability after bumping aiohttp from 1.3 to 3.8
 - [x] Set up code linting
 - [x] Set up mypy
-- [ ] Fix aiohttp deprecations
 - [x] Better client
 - [x] Add to PyPI
 - [x] Heroku deployment
-- [ ] Migrate from aiohttp to starlette or migrate from websockets to gRPC
 - [x] Expand play board
+- [ ] Fix aiohttp deprecations
+- [ ] Migrate from aiohttp to starlette or to gRPC or even to blockchain
 - [ ] Add gameplay with a computer
