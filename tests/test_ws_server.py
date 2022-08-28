@@ -4,8 +4,8 @@ import uuid
 
 from aiohttp.test_utils import AioHTTPTestCase
 
-from ttt.game import BoxType, Player, GameStatus
-from ttt.app import get_application
+from onx.game import BoxType, Player, GameStatus
+from onx.app import get_application
 
 
 class WebsocketServerTestCase(AioHTTPTestCase):

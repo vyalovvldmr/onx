@@ -5,9 +5,9 @@ from types import TracebackType
 
 from aiohttp import web
 
-from ttt.errors import NotYourTurnError
-from ttt.api import WsEvent, WsGameStateEvent, WsGameStatePayload
-from ttt import settings
+from onx.errors import NotYourTurnError
+from onx.api import WsEvent, WsGameStateEvent, WsGameStatePayload
+from onx import settings
 
 
 logger = logging.getLogger(__name__)

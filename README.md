@@ -1,6 +1,6 @@
 # Tic Tac Toe (Noughts & Crosses)
 
-[![RunTests](https://github.com/vyalovvldmr/ttt/actions/workflows/run_tests.yml/badge.svg)](https://github.com/vyalovvldmr/ttt/actions/workflows/run_tests.yml)
+[![RunTests](https://github.com/vyalovvldmr/onx/actions/workflows/run_tests.yml/badge.svg)](https://github.com/vyalovvldmr/onx/actions/workflows/run_tests.yml)
 
 Client-server Tic Tac Toe (Noughts & Crosses) terminal based, online game through websockets.
 
@@ -11,13 +11,13 @@ Python 3.10
 ## Install
 
 ```
-$ pip install ttt
+$ pip install onx
 ```
 
 ## Play Game
 
 ```
-$ ttt
+$ onx
 ```
 
 ![TUI screenshot 1](static/screen1.png)
@@ -27,7 +27,7 @@ Option `-w` or `--wining-length` changes winning sequence length.
 Option `-h` or `--help` prints help.
 
 ```
-$ ttt -g14 -w3
+$ onx -g14 -w3
 ```
 
 ![TUI screenshot 1](static/screen2.png)
@@ -44,20 +44,20 @@ $ export PORT=8888
 Run server.
 
 ```
-$ ttt -d
+$ onx -d
 ```
 
 Run client.
 
 ```
-$ ttt
+$ onx
 ```
 
 ## Run Tests
 
 ```
-$ git clone git@github.com:vyalow/ttt.git
-$ cd ttt
+$ git clone git@github.com:vyalow/onx.git
+$ cd onx
 $ pip install -r requirements.txt -r requirements-dev.txt
 $ pytest --cov
 ```

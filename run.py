@@ -21,11 +21,11 @@ from textual.widgets import Footer as _Footer, Header as _Header
 from textual.reactive import Reactive
 from textual import events
 
-from ttt.version import VERSION
-from ttt import settings
-from ttt.app import get_application
-from ttt.game import BoxType, GameStatus
-from ttt.api import WsGameStateEvent, WsEvent, WsOperationPayload, WsOperation
+from onx.version import VERSION
+from onx import settings
+from onx.app import get_application
+from onx.game import BoxType, GameStatus
+from onx.api import WsGameStateEvent, WsEvent, WsOperationPayload, WsOperation
 
 
 class WebsocketConnectionState(IntEnum):

@@ -3,8 +3,8 @@ import uuid
 
 from aiohttp import web
 
-from ttt.game import Game, BoxType, Player, GameStatus, GameContext
-from ttt.errors import NotYourTurnError
+from onx.game import Game, BoxType, Player, GameStatus, GameContext
+from onx.errors import NotYourTurnError
 
 
 class GameTestCase(unittest.TestCase):

@@ -23,8 +23,8 @@ jobs:
     - name: Linting
       run: |
         black --check .
-        mypy ttt
-        pylint ttt
+        mypy onx
+        pylint onx
         flake8
     - name: Test with pytest
       run: |

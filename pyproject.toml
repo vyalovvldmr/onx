@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "ttt"
+name = "onx"
 version = "0.1.0"
 description = "Client-server Tic Tac Toe (Noughts & Crosses) terminal based, online game through websockets."
 authors = ["Vladimir Vyalov <vyalov.v@gmail.com>"]
 license = "GPL-3.0-only"
 readme = "README.md"
-repository = "https://github.com/vyalovvldmr/ttt"
+repository = "https://github.com/vyalovvldmr/onx"
 keywords = [
     "Noughts & Crosses",
     "Tic Tac Toe",
@@ -45,7 +45,7 @@ pylint = "2.14.5"
 flake8 = "5.0.4"
 
 [tool.poetry.scripts]
-ttt = "ttt:main"
+onx = "run:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

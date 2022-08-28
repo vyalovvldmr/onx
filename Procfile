@@ -1,1 +1,1 @@
-web: python ttt.py -d
+web: python run.py -d

@@ -1,8 +1,8 @@
 lint:
 	black --check .
 	flake8
-	mypy ttt
-	pylint ttt
+	mypy onx
+	pylint onx
 test: lint
 	pytest --cov
 push: lint test

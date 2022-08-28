@@ -5,10 +5,10 @@ import aiohttp
 from aiohttp import web
 from schema import Schema, Use, And, SchemaError  # type: ignore
 
-from ttt.game import BoxType, Player, Game, GamePool, GameContext
-from ttt.errors import NotYourTurnError
-from ttt.api import WsErrorEventPayload, WsErrorEvent, WsEvent
-from ttt import settings
+from onx.game import BoxType, Player, Game, GamePool, GameContext
+from onx.errors import NotYourTurnError
+from onx.api import WsErrorEventPayload, WsErrorEvent, WsEvent
+from onx import settings
 
 
 class WebsocketHandler(web.View):
