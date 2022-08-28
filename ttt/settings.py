@@ -4,7 +4,7 @@ import os
 
 # SERVER_IP = "vyalovvldmr-ttt.herokuapp.com"
 SERVER_IP = "0.0.0.0"
-SERVER_PORT = int(os.environ.get('PORT', 8080))
+SERVER_PORT = int(os.environ.get("PORT", 8080))
 
 LOGGING_LEVEL = logging.DEBUG
 
