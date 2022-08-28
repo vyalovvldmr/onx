@@ -41,13 +41,13 @@ $ export LOCALHOST="0.0.0.0"
 $ export PORT=8888
 ```
 
-Run server
+Run server.
 
 ```
 $ ttt -d
 ```
 
-Run client
+Run client.
 
 ```
 $ ttt
