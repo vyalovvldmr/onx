@@ -23,8 +23,10 @@ $ onx
 ```
 
 You will see a game board in a waiting for your partner state.
+
 Then ask your partner to run the same cli command with **exactly** the same cli options.
 You will be matched to your partner by cli options (size and winning sequence length) on a server side.
+
 If you are running a game with a public server than I'll suggest you to make a shorter delay between running your game board and your partners board. Just for reducing the probability to be matched with somebody else.
 
 
