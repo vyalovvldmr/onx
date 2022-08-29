@@ -289,21 +289,31 @@ async def shutdown_server(app: web.Application) -> None:
         await ws.close()
 
 
+def validate_winning_length(ctx, _, value):
+    if ("grid_size" in ctx.params and value > ctx.params["grid_size"]) or (
+        "grid_size" not in ctx.params and value > settings.DEFAULT_GRID_SIZE
+    ):
+        raise click.BadParameter(
+            "winning-length have to be less or equal to --grid-size"
+        )
+
+
 @click.command(context_settings=dict(help_option_names=["-h", "--help"]))
 @click.option("-d", "--daemon", is_flag=True, help="Run server.")
 @click.option(
     "-g",
     "--grid-size",
-    help="Grid size = 3 by default.",
-    default=3,
-    type=click.IntRange(min=3, max=14),
+    help=f"Grid size = {settings.DEFAULT_GRID_SIZE} by default.",
+    default=settings.DEFAULT_GRID_SIZE,
+    type=click.IntRange(min=settings.DEFAULT_GRID_SIZE, max=14),
 )
 @click.option(
     "-w",
     "--winning-length",
-    help="Winning sequence length = 3 by default.",
-    default=3,
-    type=click.IntRange(min=3, max=5),
+    help=f"Winning sequence length = {settings.DEFAULT_WINNING_LENGTH} by default.",
+    default=settings.DEFAULT_WINNING_LENGTH,
+    type=click.IntRange(min=settings.DEFAULT_WINNING_LENGTH, max=5),
+    callback=validate_winning_length,
 )
 def main(daemon: bool, grid_size: int, winning_length: int) -> None:
     """
