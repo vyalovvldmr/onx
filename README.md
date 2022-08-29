@@ -2,7 +2,7 @@
 
 [![RunTests](https://github.com/vyalovvldmr/onx/actions/workflows/run_tests.yml/badge.svg)](https://github.com/vyalovvldmr/onx/actions/workflows/run_tests.yml)
 
-Client-server Noughts & Crosses (Tic Tac Toe) terminal based, online game through websockets.
+Noughts & Crosses (Tic Tac Toe) terminal based, client-server online game with your partner through websockets.
 
 ## Requires
 
@@ -16,15 +16,24 @@ $ pip install onx
 
 ## Play Game
 
+For running your game board just type in a terminal:
+
 ```
 $ onx
 ```
 
+You will see a game board in a waiting for your partner state.
+Then ask your partner to run the same cli command with **exactly** the same cli options.
+You will be matched to your partner by cli options (size and winning sequence length) on a server side.
+If you are running a game with a public server than I'll suggest you to make a shorter delay between running your game board and your partners board. Just for reducing the probability to be matched with somebody else.
+
+
 ![TUI screenshot 1](https://github.com/vyalovvldmr/onx/blob/master/static/screen1.png?raw=true)
 
-Command line option `-g` or `--grid-size` changes grid size.
-Option `-w` or `--wining-length` changes winning sequence length.
-Option `-h` or `--help` prints help.
+There are command line options for changing game board settings.
+`-g` or `--grid-size` changes grid size.
+`-w` or `--wining-length` changes winning sequence length.
+`-h` or `--help` prints help.
 
 ```
 $ onx -g14 -w3
@@ -62,18 +71,10 @@ $ pip install -r requirements.txt -r requirements-dev.txt
 $ pytest --cov
 ```
 
-## TODO
+## Known Limitations
 
-- [x] Bump up Python version from 3.5 to 3.10
-- [x] Fix tests stability after bumping aiohttp from 1.3 to 3.8
-- [x] Set up code linting
-- [x] Set up mypy
-- [x] Better client
-- [x] Add to PyPI
-- [x] Heroku deployment
-- [x] Expand play board
-- [ ] Deal with textual rendering issues: [711](https://github.com/Textualize/textual/issues/711), [710](https://github.com/Textualize/textual/issues/710)
-- [ ] Add Dockerfile
-- [ ] Fix aiohttp deprecations
-- [ ] Migrate from aiohttp to starlette or gRPC or even Blockchain
-- [ ] Add gameplay with a computer
+- **onx** is currently based on [textual](https://github.com/Textualize/textual) TUI framework which is awesome
+  but is at an extremely early development stage. As a result you may be faced with some rendering problem like [711](https://github.com/Textualize/textual/issues/711), [710](https://github.com/Textualize/textual/issues/710).
+  I'll suggest you to run a game board in a fullscreen mode for now.
+- Public server is currently running on a free Heroku app. It means that good enough SLA is not expected.
+- Current architecture is stateless and db-less for simplicity and faster MVP release. It means that any disconnections will actually mean starting a new game.

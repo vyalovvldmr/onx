@@ -1,9 +1,9 @@
 [tool.poetry]
 name = "onx"
 version = "0.1.2"
-description = "Client-server Noughts & Crosses (Tic Tac Toe) terminal based, online game through websockets."
+description = "Noughts & Crosses (Tic Tac Toe) terminal based, client-server online game with your partner through websockets."
 authors = ["Vladimir Vyalov <vyalov.v@gmail.com>"]
-license = "GPL-3.0-only"
+license = "GPL-3.0-or-later"
 readme = "README.md"
 repository = "https://github.com/vyalovvldmr/onx"
 keywords = [
@@ -23,7 +23,7 @@ classifiers = [
     "Topic :: Games/Entertainment :: Board Games",
     "Typing :: Typed",
     "Programming Language :: Python :: 3.10",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     "Intended Audience :: Developers",
 ]
 packages = [
