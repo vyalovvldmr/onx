@@ -100,7 +100,7 @@ class WebsocketServerTestCase(AioHTTPTestCase):
         response = json.loads((await self.awaiting.ws.receive()).data)
         self.assertEqual(response["data"]["payload"]["status"], GameStatus.unfinished)
 
-    async def test_server_errors(self):
+    async def test_player_id_cookie_required_error(self):
         ws = await self.client.ws_connect("/ws")
         response_1 = json.loads((await ws.receive()).data)
         self.assertDictEqual(
@@ -113,6 +113,7 @@ class WebsocketServerTestCase(AioHTTPTestCase):
             },
         )
 
+    async def test_not_your_turn_error(self):
         await self.connect_players()
         await self.awaiting.ws.send_json({"operation": "turn", "payload": {"turn": 0}})
         response = json.loads((await self.awaiting.ws.receive()).data)
@@ -121,6 +122,8 @@ class WebsocketServerTestCase(AioHTTPTestCase):
             {"data": {"event": "error", "payload": {"message": "Not your turn"}}},
         )
 
+    async def test_box_is_not_empty_error(self):
+        await self.connect_players()
         await self.turn(box_num=0, expected_game_status=GameStatus.in_progress)
         await self.acting.ws.send_json({"operation": "turn", "payload": {"turn": 0}})
         response = json.loads((await self.acting.ws.receive()).data)
