@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.1.5] - dev
 
+- [#3] Fix aiohttp deprecations
 - [#9] Fix errors on server shutdown
 - Add empty index handler
 - [#11] Change statuses numeration
@@ -35,6 +36,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Initial release
 
 [0.1.5]: https://github.com/vyalovvldmr/onx/compare/v0.1.4...v0.1.5
+[#3]: https://github.com/vyalovvldmr/onx/issues/3
 [#9]: https://github.com/vyalovvldmr/onx/issues/9
 [#11]: https://github.com/vyalovvldmr/onx/issues/11
 [#10]: https://github.com/vyalovvldmr/onx/issues/10

@@ -7,18 +7,15 @@ from onx import settings
 from onx.server.app import get_application
 
 
-async def run_server() -> web.Application:
+async def run_server() -> None:
     app = get_application()
-
-    await asyncio.get_event_loop().create_server(
-        app.make_handler(), settings.SERVER_HOST, settings.SERVER_PORT
-    )
-
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, settings.SERVER_HOST, settings.SERVER_PORT)
     logging.info(
         "Server started at ws://%s:%s", settings.SERVER_HOST, settings.SERVER_PORT
     )
-
-    return app
+    await site.start()
 
 
 def run_event_loop():
