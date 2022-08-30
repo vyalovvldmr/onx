@@ -69,10 +69,10 @@ class Game:
         self.status = GameStatus.in_progress
 
     def substitute_player(self, player: Player) -> None:
-        for i, p in enumerate(self.players):
-            if p.id == player.id:
-                player.box_type = p.box_type
-                self.players[i] = player
+        for num, plr in enumerate(self.players):
+            if plr.id == player.id:
+                player.box_type = plr.box_type
+                self.players[num] = player
                 break
 
     def to_dict(self) -> dict:
