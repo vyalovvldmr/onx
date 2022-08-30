@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.1.5] - dev
 
+- Add empty index handler
 - [#11] Change statuses numeration
 - [#10] Fix tests stability
 
