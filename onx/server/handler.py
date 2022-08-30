@@ -54,7 +54,6 @@ class WebsocketHandler(web.View):
     async def get(self) -> web.WebSocketResponse:
         ws = web.WebSocketResponse()
         await ws.prepare(self.request)
-        self.request.app["websockets"].append(ws)
 
         try:
             player_id = self.request.cookies["player_id"]
@@ -90,8 +89,5 @@ class WebsocketHandler(web.View):
                             "Websocket connection closed with exception %s",
                             ws.exception(),
                         )
-
         logging.debug("Websocket connection closed")
-        self.request.app["websockets"].remove(ws)
-
         return ws

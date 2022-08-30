@@ -15,15 +15,10 @@ async def run_server() -> web.Application:
     )
 
     logging.info(
-        "server started at ws://%s:%s", settings.SERVER_HOST, settings.SERVER_PORT
+        "Server started at ws://%s:%s", settings.SERVER_HOST, settings.SERVER_PORT
     )
 
     return app
-
-
-async def shutdown_server(app: web.Application) -> None:
-    for ws in app["websockets"]:
-        await ws.close()
 
 
 def run_event_loop():
@@ -32,11 +27,8 @@ def run_event_loop():
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    app = loop.run_until_complete(run_server())
+    loop.run_until_complete(run_server())
     try:
         loop.run_forever()
     except KeyboardInterrupt:
-        logging.info("server is shutting down")
-    finally:
-        loop.run_until_complete(shutdown_server(app))
-        loop.close()
+        logging.info("Server is shutting down")
