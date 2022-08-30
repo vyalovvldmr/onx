@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.1.5] - dev
 
+- [#11] Change statuses numeration
 - [#10] Fix tests stability
 
 ## [0.1.4] - 2022-08-30
@@ -32,6 +33,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Initial release
 
 [0.1.5]: https://github.com/vyalovvldmr/onx/compare/v0.1.4...v0.1.5
+[#11]: https://github.com/vyalovvldmr/onx/issues/11
 [#10]: https://github.com/vyalovvldmr/onx/issues/10
 [0.1.4]: https://github.com/vyalovvldmr/onx/compare/v0.1.3...v0.1.4
 [#6]: https://github.com/vyalovvldmr/onx/issues/6

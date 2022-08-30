@@ -22,11 +22,11 @@ class BoxType:
 
 class GameStatus:
     # game is waiting for a player
-    awaiting: int = 1
+    awaiting: int = 100
     # game is in progress
-    in_progress: int = 2
+    in_progress: int = 200
     # game is finished
-    finished: int = 4
+    finished: int = 300
 
 
 @dataclass
