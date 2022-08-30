@@ -3,8 +3,8 @@ import json
 
 from schema import SchemaError
 
-from onx.game import Game, BoxType, Player, GameContext
-from onx.handler import WebsocketHandler
+from onx.server.game import Game, BoxType, Player, GameContext
+from onx.server.handler import WebsocketHandler
 
 
 class ValidationTestCase(unittest.TestCase):

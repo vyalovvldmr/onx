@@ -5,7 +5,7 @@ from types import TracebackType
 
 from aiohttp import web
 
-from onx.errors import NotYourTurnError
+from onx.server.errors import NotYourTurnError
 from onx.api import WsEvent, WsGameStateEvent, WsGameStatePayload
 from onx import settings
 

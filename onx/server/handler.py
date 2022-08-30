@@ -5,8 +5,8 @@ import aiohttp
 from aiohttp import web
 from schema import Schema, Use, And, SchemaError  # type: ignore
 
-from onx.game import BoxType, Player, Game, GamePool, GameContext
-from onx.errors import NotYourTurnError
+from onx.server.game import BoxType, Player, Game, GamePool, GameContext
+from onx.server.errors import NotYourTurnError
 from onx.api import WsErrorEventPayload, WsErrorEvent, WsEvent
 from onx import settings
 

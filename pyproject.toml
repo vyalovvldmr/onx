@@ -28,6 +28,8 @@ classifiers = [
 ]
 packages = [
     { include = "onx" },
+    { include = "onx/server" },
+    { include = "onx/tui" },
     { include = "run.py" },
 ]
 
