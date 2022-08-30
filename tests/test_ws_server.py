@@ -16,7 +16,7 @@ class WebsocketServerTestCase(AioHTTPTestCase):
         player_id = player_id or str(uuid.uuid4())
         ws = await self.client.ws_connect(
             "/ws",
-            headers={"Cookie": "player_id={player_id}".format(player_id=player_id)},
+            headers={"Cookie": f"player_id={player_id}"},
         )
         return Player(id=player_id, ws=ws)
 
@@ -67,6 +67,17 @@ class WebsocketServerTestCase(AioHTTPTestCase):
         else:
             self.acting, self.awaiting = self.players[::-1]
 
+    async def force_reconnect_random_player(self):
+        player = self.players[0]
+        await player.ws.close()
+        if self.acting.id == player.id:
+            self.players[0] = self.acting = await self.connect_player(player.id)
+        else:
+            self.players[0] = self.awaiting = await self.connect_player(player.id)
+        response_1 = json.loads((await self.players[0].ws.receive()).data)
+        response_2 = json.loads((await self.players[1].ws.receive()).data)
+        self.assertDictEqual(response_1, response_2)
+
     async def test_winning_the_game(self):
         await self.connect_players()
 
@@ -98,16 +109,7 @@ class WebsocketServerTestCase(AioHTTPTestCase):
 
         await self.turn(box_num=0, expected_game_status=GameStatus.in_progress)
         await self.turn(box_num=1, expected_game_status=GameStatus.in_progress)
-
-        player = self.players[0]
-        await player.ws.close()
-        if self.acting == player.id:
-            self.players[0] = self.acting = await self.connect_player(player.id)
-        else:
-            self.players[0] = self.awaiting = await self.connect_player(player.id)
-        await self.players[0].ws.receive()
-        await self.players[1].ws.receive()
-
+        await self.force_reconnect_random_player()
         await self.turn(box_num=3, expected_game_status=GameStatus.in_progress)
         await self.turn(box_num=4, expected_game_status=GameStatus.in_progress)
         await self.turn(

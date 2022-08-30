@@ -87,10 +87,10 @@ class WebsocketHandler(web.View):
                                 await game.publish_state()
                     if message.type == aiohttp.WSMsgType.ERROR:
                         logging.debug(
-                            "ws connection closed with exception %s", ws.exception()
+                            "Websocket connection closed with exception %s", ws.exception()
                         )
 
-        logging.debug("websocket connection closed")
+        logging.debug("Websocket connection closed")
         self.request.app["websockets"].remove(ws)
 
         return ws
