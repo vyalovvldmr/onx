@@ -12,8 +12,8 @@ class WebsocketServerTestCase(AioHTTPTestCase):
     async def get_application(self):
         return get_application()
 
-    async def connect_player(self):
-        player_id = str(uuid.uuid4())
+    async def connect_player(self, player_id=None):
+        player_id = player_id or str(uuid.uuid4())
         ws = await self.client.ws_connect(
             "/ws",
             headers={"Cookie": "player_id={player_id}".format(player_id=player_id)},
@@ -93,12 +93,28 @@ class WebsocketServerTestCase(AioHTTPTestCase):
         await self.turn(box_num=5, expected_game_status=GameStatus.in_progress)
         await self.turn(box_num=3, expected_game_status=GameStatus.finished)
 
-    async def test_unfinished_game(self):
+    async def test_retrieve_game_after_disconnection(self):
         await self.connect_players()
 
-        await self.acting.ws.close()
-        response = json.loads((await self.awaiting.ws.receive()).data)
-        self.assertEqual(response["data"]["payload"]["status"], GameStatus.unfinished)
+        await self.turn(box_num=0, expected_game_status=GameStatus.in_progress)
+        await self.turn(box_num=1, expected_game_status=GameStatus.in_progress)
+
+        player = self.players[0]
+        await player.ws.close()
+        if self.acting == player.id:
+            self.players[0] = self.acting = await self.connect_player(player.id)
+        else:
+            self.players[0] = self.awaiting = await self.connect_player(player.id)
+        await self.players[0].ws.receive()
+        await self.players[1].ws.receive()
+
+        await self.turn(box_num=3, expected_game_status=GameStatus.in_progress)
+        await self.turn(box_num=4, expected_game_status=GameStatus.in_progress)
+        await self.turn(
+            box_num=6,
+            expected_game_status=GameStatus.finished,
+            expected_winner=self.acting.id,
+        )
 
     async def test_player_id_cookie_required_error(self):
         ws = await self.client.ws_connect("/ws")

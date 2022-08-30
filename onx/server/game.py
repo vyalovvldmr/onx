@@ -4,7 +4,7 @@ import logging
 from types import TracebackType
 
 from aiohttp import web
-
+from cachetools import TTLCache
 from onx.server.errors import NotYourTurnError
 from onx.api import WsEvent, WsGameStateEvent, WsGameStatePayload
 from onx import settings
@@ -25,8 +25,6 @@ class GameStatus:
     awaiting: int = 1
     # game is in progress
     in_progress: int = 2
-    # some player gone
-    unfinished: int = 3
     # game is finished
     finished: int = 4
 
@@ -70,6 +68,14 @@ class Game:
         self.whose_turn = self.players[random.randint(0, 1)]
         self.status = GameStatus.in_progress
 
+    def substitute_player(self, player: Player) -> None:
+        if self.players[0].id == player.id:
+            player.box_type = self.players[0].box_type
+            self.players[0] = player
+        elif self.players[1].id == player.id:
+            player.box_type = self.players[1].box_type
+            self.players[1] = player
+
     def to_dict(self) -> dict:
         return {
             "whose_turn": self.whose_turn and self.whose_turn.id or None,
@@ -90,8 +96,10 @@ class Game:
         if self.is_winner(player, turn):
             self.winner = player
             self.status = GameStatus.finished
+            logger.debug("Game finished")
         elif BoxType.empty not in self.grid:
             self.status = GameStatus.finished
+            logger.debug("Game finished")
 
     def gen_winning_lines(self, turn: int) -> list[list[int]]:
         row_num = turn // self.context.grid_size
@@ -185,6 +193,7 @@ class Game:
 class GamePool:
 
     _awaiting: dict[GameContext, Game] = {}
+    _active_games: TTLCache[str, Game] = TTLCache(maxsize=10**6, ttl=60 * 60)
 
     def __init__(self, context: GameContext, player: Player):
         self._context: GameContext = context
@@ -192,15 +201,28 @@ class GamePool:
         self._game: Game | None = None
 
     async def __aenter__(self) -> Game:
-        if self._context in GamePool._awaiting:
+        if (
+            self._player.id in GamePool._active_games
+            and GamePool._active_games[self._player.id].status == GameStatus.in_progress
+        ):
+            self._game = GamePool._active_games[self._player.id]
+            self._game.substitute_player(self._player)
+            logger.debug(
+                "Game retrieved after disconnection for player_id=%s", self._player.id
+            )
+        elif self._context in GamePool._awaiting:
             self._game = GamePool._awaiting[self._context]
             del GamePool._awaiting[self._context]
             self._game.add_player(self._player)
+            GamePool._active_games[self._player.id] = self._game
             self._game.toss()
+            logger.debug("Game started")
         else:
             self._game = Game(self._context)
             self._game.add_player(self._player)
+            GamePool._active_games[self._player.id] = self._game
             GamePool._awaiting[self._context] = self._game
+            logger.debug("Game created")
         await self._game.publish_state()
         return self._game
 
@@ -215,9 +237,3 @@ class GamePool:
             and GamePool._awaiting[self._context] is self._game
         ):
             del GamePool._awaiting[self._context]
-        if self._game is not None:
-            if self._game.status == GameStatus.in_progress:
-                self._game.status = GameStatus.unfinished
-            await self._game.publish_state()
-            for player in self._game.players:
-                await player.ws.close()

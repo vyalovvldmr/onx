@@ -58,6 +58,7 @@ class GameApp(App):
         await self.bind("q", "quit", "Quit")
 
     async def action_new_game(self) -> None:
+        self._player_id = str(uuid.uuid4())
         if self._ws:
             await self._ws.close()
 
