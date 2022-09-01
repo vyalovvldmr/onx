@@ -5,8 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.1.5] - dev
+## [0.2.0] - dev
 
+- [#12] Automate poetry build
+- Add pre-commit
 - [#3] Fix aiohttp deprecations
 - [#9] Fix errors on server shutdown
 - Add empty index handler
@@ -35,7 +37,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Initial release
 
-[0.1.5]: https://github.com/vyalovvldmr/onx/compare/v0.1.4...v0.1.5
+[0.1.5]: https://github.com/vyalovvldmr/onx/compare/v0.1.4...v0.2.0
+[#12]: https://github.com/vyalovvldmr/onx/issues/12
 [#3]: https://github.com/vyalovvldmr/onx/issues/3
 [#9]: https://github.com/vyalovvldmr/onx/issues/9
 [#11]: https://github.com/vyalovvldmr/onx/issues/11

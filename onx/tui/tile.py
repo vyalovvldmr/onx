@@ -1,6 +1,8 @@
 from pyfiglet import Figlet  # type: ignore
 from rich.align import Align
-from rich.console import Console, ConsoleOptions, RenderResult
+from rich.console import Console
+from rich.console import ConsoleOptions
+from rich.console import RenderResult
 from rich.panel import Panel
 from rich.text import Text
 from textual import events

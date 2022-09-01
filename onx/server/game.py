@@ -1,14 +1,16 @@
-from dataclasses import dataclass
-import random
 import logging
+import random
+from dataclasses import dataclass
 from types import TracebackType
 
 from aiohttp import web
 from cachetools import TTLCache
-from onx.server.errors import NotYourTurnError
-from onx.api import WsEvent, WsGameStateEvent, WsGameStatePayload
-from onx import settings
 
+from onx import settings
+from onx.api import WsEvent
+from onx.api import WsGameStateEvent
+from onx.api import WsGameStatePayload
+from onx.server.errors import NotYourTurnError
 
 logger = logging.getLogger(__name__)
 
