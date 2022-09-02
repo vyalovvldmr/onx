@@ -34,7 +34,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "3.10"
+python = "^3.10"
 aiohttp = {version = "3.8.1", extras = ["speedups"]}
 schema = "0.7.5"
 textual = "0.1.18"
