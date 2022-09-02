@@ -37,7 +37,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Initial release
 
-[0.1.5]: https://github.com/vyalovvldmr/onx/compare/v0.1.4...v0.2.0
+[0.2.0]: https://github.com/vyalovvldmr/onx/compare/v0.1.4...v0.2.0
 [#12]: https://github.com/vyalovvldmr/onx/issues/12
 [#3]: https://github.com/vyalovvldmr/onx/issues/3
 [#9]: https://github.com/vyalovvldmr/onx/issues/9

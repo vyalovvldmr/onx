@@ -87,3 +87,9 @@ $ pytest --cov
   but is at an extremely early development stage. As a result you may be faced with some rendering problem like [711](https://github.com/Textualize/textual/issues/711), [710](https://github.com/Textualize/textual/issues/710).
   I'll suggest you to run a game board in a fullscreen mode for now.
 - Public server is currently running on a free Heroku app. It means that a good enough SLA is not expected.
+
+## Release
+
+```
+make release version=[patch | minor | major]
+```
