@@ -8,7 +8,7 @@ def validate_winning_length(ctx, _, value):
         "grid_size" not in ctx.params and value > settings.DEFAULT_GRID_SIZE
     ):
         raise click.BadParameter(
-            "winning-length have to be less or equal to --grid-size"
+            "winning-length has to be less or equal to --grid-size"
         )
 
 
