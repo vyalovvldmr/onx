@@ -14,6 +14,13 @@ Python 3.10
 $ pip install onx
 ```
 
+or
+
+```
+$ poetry shell
+$ poetry add onx
+```
+
 ## Play Game
 
 For running your game board just type in a terminal:
@@ -69,7 +76,8 @@ $ onx
 ```
 $ git clone git@github.com:vyalow/onx.git
 $ cd onx
-$ pip install -r requirements.txt -r requirements-dev.txt
+$ poetry shell
+$ poetry install --no-root
 $ pytest --cov
 ```
 

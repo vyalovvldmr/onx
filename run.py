@@ -39,10 +39,10 @@ def main(daemon: bool, grid_size: int, winning_length: int) -> None:
         run_event_loop()
     else:
         from onx.tui.app import GameApp
-        from onx.version import VERSION
+        from onx import __version__
 
         GameApp.run(
-            title=f"Noughts & Crosses v{VERSION}",
+            title=f"Noughts & Crosses v{__version__}",
             grid_size=grid_size,
             winning_length=winning_length,
         )
