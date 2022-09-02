@@ -3,12 +3,21 @@ import logging
 
 import aiohttp
 from aiohttp import web
-from schema import Schema, Use, And, SchemaError  # type: ignore
+from schema import And  # type: ignore
+from schema import Schema  # type: ignore
+from schema import SchemaError  # type: ignore
+from schema import Use  # type: ignore
 
-from onx.server.game import BoxType, Player, Game, GamePool, GameContext
-from onx.server.errors import NotYourTurnError
-from onx.api import WsErrorEventPayload, WsErrorEvent, WsEvent
 from onx import settings
+from onx.api import WsErrorEvent
+from onx.api import WsErrorEventPayload
+from onx.api import WsEvent
+from onx.server.errors import NotYourTurnError
+from onx.server.game import BoxType
+from onx.server.game import Game
+from onx.server.game import GameContext
+from onx.server.game import GamePool
+from onx.server.game import Player
 
 
 class WebsocketHandler(web.View):
@@ -54,7 +63,6 @@ class WebsocketHandler(web.View):
     async def get(self) -> web.WebSocketResponse:
         ws = web.WebSocketResponse()
         await ws.prepare(self.request)
-        self.request.app["websockets"].append(ws)
 
         try:
             player_id = self.request.cookies["player_id"]
@@ -90,8 +98,5 @@ class WebsocketHandler(web.View):
                             "Websocket connection closed with exception %s",
                             ws.exception(),
                         )
-
         logging.debug("Websocket connection closed")
-        self.request.app["websockets"].remove(ws)
-
         return ws

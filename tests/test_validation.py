@@ -1,9 +1,12 @@
-import unittest
 import json
+import unittest
 
 from schema import SchemaError
 
-from onx.server.game import Game, BoxType, Player, GameContext
+from onx.server.game import BoxType
+from onx.server.game import Game
+from onx.server.game import GameContext
+from onx.server.game import Player
 from onx.server.handler import WebsocketHandler
 
 

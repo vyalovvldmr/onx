@@ -1,7 +1,6 @@
 import logging
 import os
 
-
 SERVER_HOST = os.environ.get("LOCALHOST", "vyalovvldmr-onx.herokuapp.com")
 
 SERVER_PORT = int(os.environ.get("PORT", 80))

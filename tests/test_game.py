@@ -3,8 +3,12 @@ import uuid
 
 from aiohttp import web
 
-from onx.server.game import Game, BoxType, Player, GameStatus, GameContext
 from onx.server.errors import NotYourTurnError
+from onx.server.game import BoxType
+from onx.server.game import Game
+from onx.server.game import GameContext
+from onx.server.game import GameStatus
+from onx.server.game import Player
 
 
 class GameTestCase(unittest.TestCase):

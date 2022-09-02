@@ -1,11 +1,13 @@
-import unittest
 import json
+import unittest
 import uuid
 
 from aiohttp.test_utils import AioHTTPTestCase
 
-from onx.server.game import BoxType, Player, GameStatus
 from onx.server.app import get_application
+from onx.server.game import BoxType
+from onx.server.game import GameStatus
+from onx.server.game import Player
 
 
 class WebsocketServerTestCase(AioHTTPTestCase):

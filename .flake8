@@ -2,3 +2,4 @@
 ignore = E501,W503
 exclude =
     venv,
+    .venv,

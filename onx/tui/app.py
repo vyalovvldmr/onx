@@ -7,12 +7,17 @@ import aiohttp
 from textual.app import App
 
 from onx import settings
-from onx.api import WsEvent, WsGameStateEvent, WsOperation, WsOperationPayload
-from onx.server.game import GameStatus, BoxType
-from onx.tui.events import Connect, Disconnect
-from onx.tui.header import Header
+from onx.api import WsEvent
+from onx.api import WsGameStateEvent
+from onx.api import WsOperation
+from onx.api import WsOperationPayload
+from onx.server.game import BoxType
+from onx.server.game import GameStatus
+from onx.tui.events import Connect
+from onx.tui.events import Disconnect
 from onx.tui.footer import Footer
 from onx.tui.grid import Grid
+from onx.tui.header import Header
 
 
 class WebsocketConnectionState(IntEnum):

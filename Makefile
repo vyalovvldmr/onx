@@ -5,5 +5,8 @@ lint:
 	pylint onx
 test: lint
 	pytest --cov
-push: lint test
-	git push
+release: test
+	poetry version $(version)
+	git commit -am 'Bumped the version'
+	git tag $(poetry version -s)
+	git push --tags

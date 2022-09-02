@@ -1,7 +1,0 @@
-pytest==7.1.2
-pytest-cov==3.0.0
-black==22.6.0
-mypy==0.971
-pylint==2.14.5
-flake8==5.0.4
-types-cachetools==5.2.1
