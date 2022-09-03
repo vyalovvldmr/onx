@@ -3,55 +3,23 @@ import logging
 
 import aiohttp
 from aiohttp import web
-from schema import And  # type: ignore
-from schema import Schema  # type: ignore
-from schema import SchemaError  # type: ignore
-from schema import Use  # type: ignore
+from pydantic.error_wrappers import ValidationError
 
 from onx import settings
 from onx.api import WsErrorEvent
 from onx.api import WsErrorEventPayload
 from onx.api import WsEvent
+from onx.api import WsOperation
+from onx.server.errors import BoxIsNotEmptyError
+from onx.server.errors import InvalidTurnNumberError
 from onx.server.errors import NotYourTurnError
-from onx.server.game import BoxType
-from onx.server.game import Game
+from onx.server.errors import TurnWithoutSecondPlayerError
 from onx.server.game import GameContext
 from onx.server.game import GamePool
 from onx.server.game import Player
 
 
 class WebsocketHandler(web.View):
-    @staticmethod
-    def validate_request(data: str, game: Game) -> dict:
-        schema = Schema(
-            And(
-                Use(json.loads),
-                {
-                    "operation": And(
-                        str, lambda x: x == "turn", error="Unsupported operation."
-                    ),
-                    "payload": {
-                        "turn": And(
-                            int,
-                            Schema(
-                                lambda x: x in range(game.context.grid_size**2),
-                                error="Invalid turn number.",
-                            ),
-                            Schema(
-                                lambda x: game.grid[x] == BoxType.empty,
-                                error="Box is not empty. Try again.",
-                            ),
-                            Schema(
-                                lambda x: len(game.players) == Game.player_amount,
-                                error="Turn is applicable for two players game",
-                            ),
-                        )
-                    },
-                },
-            )
-        )
-        return schema.validate(data)
-
     @staticmethod
     async def send_error(error_message: str, ws: web.WebSocketResponse) -> None:
         await ws.send_json(
@@ -83,14 +51,19 @@ class WebsocketHandler(web.View):
                 async for message in ws:
                     if message.type == aiohttp.WSMsgType.TEXT:
                         try:
-                            request = self.validate_request(message.data, game)
-                        except SchemaError as error:
-                            await self.send_error(error.code, ws)
+                            operation = WsOperation(**json.loads(message.data))
+                        except ValidationError as err:
+                            await self.send_error(str(err), ws)
                         else:
                             try:
-                                game.turn(player, int(request["payload"]["turn"]))
-                            except NotYourTurnError:
-                                await self.send_error("Not your turn", ws)
+                                game.turn(player, int(operation.payload.turn))
+                            except (
+                                NotYourTurnError,
+                                InvalidTurnNumberError,
+                                BoxIsNotEmptyError,
+                                TurnWithoutSecondPlayerError,
+                            ) as err:
+                                await self.send_error(str(err), ws)
                             else:
                                 await game.publish_state()
                     if message.type == aiohttp.WSMsgType.ERROR:

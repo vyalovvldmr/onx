@@ -10,7 +10,10 @@ from onx import settings
 from onx.api import WsEvent
 from onx.api import WsGameStateEvent
 from onx.api import WsGameStatePayload
+from onx.server.errors import BoxIsNotEmptyError
+from onx.server.errors import InvalidTurnNumberError
 from onx.server.errors import NotYourTurnError
+from onx.server.errors import TurnWithoutSecondPlayerError
 
 logger = logging.getLogger(__name__)
 
@@ -86,11 +89,14 @@ class Game:
         }
 
     def turn(self, player: Player, turn: int) -> None:
-        assert (
-            len(self.players) == Game.player_amount
-        ), "Turn is applicable for two players game"
+        if len(self.players) != Game.player_amount:
+            raise TurnWithoutSecondPlayerError()
         if self.whose_turn is None or self.whose_turn.id != player.id:
             raise NotYourTurnError()
+        if turn not in range(self.context.grid_size**2):
+            raise InvalidTurnNumberError()
+        if self.grid[turn] != BoxType.empty:
+            raise BoxIsNotEmptyError()
 
         self.grid[turn] = player.box_type
         self.whose_turn = [p for p in self.players if p.id != self.whose_turn.id][0]

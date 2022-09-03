@@ -33,5 +33,5 @@ class WsOperationPayload(BaseModel):
 
 
 class WsOperation(BaseModel):
-    operation: str = "turn"
+    operation: Literal["turn"] = "turn"
     payload: WsOperationPayload

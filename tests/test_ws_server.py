@@ -139,7 +139,7 @@ class WebsocketServerTestCase(AioHTTPTestCase):
         response = json.loads((await self.awaiting.ws.receive()).data)
         self.assertDictEqual(
             response,
-            {"data": {"event": "error", "payload": {"message": "Not your turn"}}},
+            {"data": {"event": "error", "payload": {"message": "not your turn error"}}},
         )
 
     async def test_box_is_not_empty_error(self):
@@ -152,7 +152,37 @@ class WebsocketServerTestCase(AioHTTPTestCase):
             {
                 "data": {
                     "event": "error",
-                    "payload": {"message": "Box is not empty. Try again."},
+                    "payload": {"message": "box is not empty error"},
+                }
+            },
+        )
+
+    async def test_invalid_turn_number_error(self):
+        await self.connect_players()
+        await self.turn(box_num=0, expected_game_status=GameStatus.in_progress)
+        await self.acting.ws.send_json({"operation": "turn", "payload": {"turn": 200}})
+        response = json.loads((await self.acting.ws.receive()).data)
+        self.assertDictEqual(
+            response,
+            {
+                "data": {
+                    "event": "error",
+                    "payload": {"message": "invalid turn number error"},
+                }
+            },
+        )
+
+    async def test_turn_without_second_player_error(self):
+        player = await self.connect_player()
+        await player.ws.receive()
+        await player.ws.send_json({"operation": "turn", "payload": {"turn": 1}})
+        response = json.loads((await player.ws.receive()).data)
+        self.assertDictEqual(
+            response,
+            {
+                "data": {
+                    "event": "error",
+                    "payload": {"message": "turn without second player error"},
                 }
             },
         )

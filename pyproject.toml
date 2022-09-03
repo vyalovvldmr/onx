@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "onx"
-version = "0.2.0"
+version = "0.3.0"
 description = "Noughts & Crosses (Tic Tac Toe) terminal based, client-server online game with your partner through websockets."
 authors = ["Vladimir Vyalov <vyalov.v@gmail.com>"]
 license = "GPL-3.0-or-later"
@@ -36,7 +36,6 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.10"
 aiohttp = {version = "3.8.1", extras = ["speedups"]}
-schema = "0.7.5"
 textual = "0.1.18"
 pyfiglet = "0.8.post1"
 click = "8.1.3"
