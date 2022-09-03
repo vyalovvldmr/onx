@@ -128,7 +128,9 @@ class WebsocketServerTestCase(AioHTTPTestCase):
             {
                 "data": {
                     "event": "error",
-                    "payload": {"message": "player_id cookie required"},
+                    "payload": {
+                        "message": "('player_id',) field required value_error.missing"
+                    },
                 }
             },
         )

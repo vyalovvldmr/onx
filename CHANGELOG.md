@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.4.0] - dev
+
+- [#15] Rewrite cookie validation with pydantic
+
 ## [0.3.0] - 2022-09-03
 
 - [#13] Rewrite handler validation with pydantic
@@ -41,6 +45,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Initial release
 
+[0.4.0]: https://github.com/vyalovvldmr/onx/compare/v0.3.0...v0.4.0
+[#15]: https://github.com/vyalovvldmr/onx/issues/15
 [0.3.0]: https://github.com/vyalovvldmr/onx/compare/v0.2.0...v0.3.0
 [#13]: https://github.com/vyalovvldmr/onx/issues/13
 [0.2.0]: https://github.com/vyalovvldmr/onx/compare/v0.1.4...v0.2.0

@@ -2,6 +2,8 @@ from typing import Literal
 
 from pydantic import BaseModel
 
+from onx import settings
+
 
 class WsErrorEventPayload(BaseModel):
     message: str
@@ -35,3 +37,9 @@ class WsOperationPayload(BaseModel):
 class WsOperation(BaseModel):
     operation: Literal["turn"] = "turn"
     payload: WsOperationPayload
+
+
+class WsCookie(BaseModel):
+    player_id: str
+    greed_size: int = settings.DEFAULT_GRID_SIZE
+    winning_length: int = settings.DEFAULT_WINNING_LENGTH

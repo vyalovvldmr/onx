@@ -10,6 +10,7 @@ def validate_winning_length(ctx, _, value):
         raise click.BadParameter(
             "winning-length has to be less or equal to --grid-size"
         )
+    return value
 
 
 @click.command(context_settings=dict(help_option_names=["-h", "--help"]))

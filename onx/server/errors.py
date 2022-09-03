@@ -1,24 +1,24 @@
 import re
 
 
-class BaseError(Exception):
+class BaseGameValidationError(Exception):
     regexp = re.compile("(?!^)([A-Z]+)")
 
     def __str__(self):
         return self.regexp.sub(r" \1", self.__class__.__name__).lower()
 
 
-class NotYourTurnError(BaseError):
+class NotYourTurnError(BaseGameValidationError):
     pass
 
 
-class InvalidTurnNumberError(BaseError):
+class InvalidTurnNumberError(BaseGameValidationError):
     pass
 
 
-class BoxIsNotEmptyError(BaseError):
+class BoxIsNotEmptyError(BaseGameValidationError):
     pass
 
 
-class TurnWithoutSecondPlayerError(BaseError):
+class TurnWithoutSecondPlayerError(BaseGameValidationError):
     pass
