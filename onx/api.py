@@ -41,5 +41,5 @@ class WsOperation(BaseModel):
 
 class WsCookie(BaseModel):
     player_id: str
-    greed_size: int = settings.DEFAULT_GRID_SIZE
+    grid_size: int = settings.DEFAULT_GRID_SIZE
     winning_length: int = settings.DEFAULT_WINNING_LENGTH

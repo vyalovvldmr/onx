@@ -19,8 +19,9 @@ async def run_server() -> None:
 
 
 def run_event_loop():
-    logging.getLogger().addHandler(logging.StreamHandler())
-    logging.getLogger().setLevel(settings.LOGGING_LEVEL)
+    logging.basicConfig(
+        level=settings.LOGGING_LEVEL, format="%(asctime)s %(levelname)s: %(message)s"
+    )
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)

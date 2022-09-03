@@ -15,6 +15,8 @@ from onx.server.game import GameContext
 from onx.server.game import GamePool
 from onx.server.game import Player
 
+logger = logging.getLogger(__name__)
+
 
 class WebsocketHandler(web.View):
     async def get(self) -> web.WebSocketResponse:
@@ -27,7 +29,7 @@ class WebsocketHandler(web.View):
             return ws
         player = Player(id=cookie.player_id, ws=ws)
         context = GameContext(
-            grid_size=cookie.greed_size, winning_length=cookie.winning_length
+            grid_size=cookie.grid_size, winning_length=cookie.winning_length
         )
         async with GamePool(context, player) as game:
             async for message in ws:
@@ -44,11 +46,11 @@ class WebsocketHandler(web.View):
                         return ws
                     await game.publish_state()
                 if message.type == aiohttp.WSMsgType.ERROR:
-                    logging.debug(
+                    logger.debug(
                         "Websocket connection closed with exception %s",
                         ws.exception(),
                     )
-        logging.debug("Websocket connection closed")
+        logger.debug("Websocket connection closed")
         return ws
 
     @staticmethod
@@ -59,6 +61,7 @@ class WebsocketHandler(web.View):
             )
         else:
             message = str(error)
+        logger.warning(message)
         await ws.send_json(
             WsEvent(
                 data=WsErrorEvent(payload=WsErrorEventPayload(message=message))

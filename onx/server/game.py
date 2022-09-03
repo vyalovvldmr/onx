@@ -223,13 +223,13 @@ class GamePool:
             self._game.add_player(self._player)
             GamePool._active_games[self._player.id] = self._game
             self._game.toss()
-            logger.debug("Game started")
+            logger.debug("Game started %s", self._context)
         else:
             self._game = Game(self._context)
             self._game.add_player(self._player)
             GamePool._active_games[self._player.id] = self._game
             GamePool._awaiting[self._context] = self._game
-            logger.debug("Game created")
+            logger.debug("Game created %s", self._context)
         await self._game.publish_state()
         return self._game
 
