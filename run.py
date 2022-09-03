@@ -3,16 +3,6 @@ import click
 from onx import settings
 
 
-def validate_winning_length(ctx, _, value):
-    if ("grid_size" in ctx.params and value > ctx.params["grid_size"]) or (
-        "grid_size" not in ctx.params and value > settings.DEFAULT_GRID_SIZE
-    ):
-        raise click.BadParameter(
-            "winning-length has to be less or equal to --grid-size"
-        )
-    return value
-
-
 @click.command(context_settings=dict(help_option_names=["-h", "--help"]))
 @click.option("-d", "--daemon", is_flag=True, help="Run server.")
 @click.option(
@@ -28,13 +18,16 @@ def validate_winning_length(ctx, _, value):
     help=f"Winning sequence length = {settings.DEFAULT_WINNING_LENGTH} by default.",
     default=settings.DEFAULT_WINNING_LENGTH,
     type=click.IntRange(min=settings.DEFAULT_WINNING_LENGTH, max=5),
-    callback=validate_winning_length,
 )
 def main(daemon: bool, grid_size: int, winning_length: int) -> None:
     """
     Noughts & Crosses game. Client and server command.
     """
-    if daemon:
+    if winning_length > grid_size:
+        raise click.BadParameter(
+            "'-w' / '--winning-length' has to be less or equal to '-g' / '--grid-size'"
+        )
+    elif daemon:
         from onx.server.event_loop import run_event_loop
 
         run_event_loop()

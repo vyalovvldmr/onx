@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "onx"
-version = "0.3.0"
+version = "0.3.1"
 description = "Noughts & Crosses (Tic Tac Toe) terminal based, client-server online game with your partner through websockets."
 authors = ["Vladimir Vyalov <vyalov.v@gmail.com>"]
 license = "GPL-3.0-or-later"
