@@ -7,10 +7,10 @@ import aiohttp
 from textual.app import App
 
 from onx import settings
-from onx.api import WsEvent
-from onx.api import WsGameStateEvent
-from onx.api import WsOperation
-from onx.api import WsOperationPayload
+from onx.models import WsEvent
+from onx.models import WsGameStateEvent
+from onx.models import WsOperation
+from onx.models import WsOperationPayload
 from onx.server.game import BoxType
 from onx.server.game import GameStatus
 from onx.tui.events import Connect

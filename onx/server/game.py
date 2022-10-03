@@ -7,9 +7,9 @@ from aiohttp import web
 from cachetools import TTLCache
 
 from onx import settings
-from onx.api import WsEvent
-from onx.api import WsGameStateEvent
-from onx.api import WsGameStatePayload
+from onx.models import WsEvent
+from onx.models import WsGameStateEvent
+from onx.models import WsGameStatePayload
 from onx.server.errors import BoxIsNotEmptyError
 from onx.server.errors import InvalidTurnNumberError
 from onx.server.errors import NotYourTurnError

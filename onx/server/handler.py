@@ -5,11 +5,11 @@ import aiohttp
 from aiohttp import web
 from pydantic.error_wrappers import ValidationError
 
-from onx.api import WsCookie
-from onx.api import WsErrorEvent
-from onx.api import WsErrorEventPayload
-from onx.api import WsEvent
-from onx.api import WsOperation
+from onx.models import WsCookie
+from onx.models import WsErrorEvent
+from onx.models import WsErrorEventPayload
+from onx.models import WsEvent
+from onx.models import WsOperation
 from onx.server.errors import BaseGameValidationError
 from onx.server.game import GameContext
 from onx.server.game import GamePool
