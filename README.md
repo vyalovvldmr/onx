@@ -1,6 +1,7 @@
 # Noughts & Crosses (Tic Tac Toe)
 
 [![RunTests](https://github.com/vyalovvldmr/onx/actions/workflows/run_tests.yml/badge.svg)](https://github.com/vyalovvldmr/onx/actions/workflows/run_tests.yml)
+<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 
 Noughts & Crosses (Tic Tac Toe) terminal based, client-server online game with your partner through websockets.
 
